@@ -119,7 +119,7 @@
         .time-adjuster {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             justify-content: center;
         }
 
@@ -505,6 +505,9 @@
         }
 
         function selectSound(soundType) {
+            // Arrêter tous les sons en cours
+            stopAllSounds();
+            
             selectedSound = soundType;
             
             // Mettre à jour l'interface
@@ -528,6 +531,31 @@
                 } catch (error) {
                     console.log('Aperçu audio non disponible');
                 }
+            }
+        }
+
+        function stopAllSounds() {
+            // Arrêter tous les sons pré-chargés
+            Object.values(preloadedSounds).forEach(audio => {
+                if (audio) {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }
+            });
+            
+            // Arrêter le son personnalisé
+            if (customAudio) {
+                customAudio.pause();
+                customAudio.currentTime = 0;
+            }
+            
+            // Arrêter le contexte audio (cloche générée)
+            try {
+                if (audioContext.state === 'running') {
+                    // Les oscillateurs s'arrêtent automatiquement
+                }
+            } catch (error) {
+                console.log('Contexte audio déjà fermé');
             }
         }
 
