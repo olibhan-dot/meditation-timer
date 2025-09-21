@@ -94,12 +94,12 @@
         .time-controls {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+            gap: 28px;
             margin-bottom: 48px;
-            max-width: 340px;
+            max-width: 360px;
             margin-left: auto;
             margin-right: auto;
-            padding: 0 8px;
+            padding: 0 12px;
         }
 
         .time-control {
@@ -369,6 +369,9 @@
             <div class="sound-label">Son de fin</div>
             <div class="sound-options">
                 <button class="sound-btn active" data-sound="bell" onclick="selectSound('bell')" title="Cloche tibétaine">🔔</button>
+                <button class="sound-btn" data-sound="birds" onclick="selectSound('birds')" title="Ambiance oiseaux">🐦</button>
+                <button class="sound-btn" data-sound="bowl" onclick="selectSound('bowl')" title="Bol chantant">🥣</button>
+                <button class="sound-btn" data-sound="chimes" onclick="selectSound('chimes')" title="Carillons joyeux">🎐</button>
                 <button class="sound-btn" data-sound="custom" onclick="selectSound('custom')" title="Son personnalisé">🎵</button>
                 <button class="sound-btn" data-sound="none" onclick="selectSound('none')" title="Silencieux">🔇</button>
             </div>
@@ -394,12 +397,25 @@
         let customAudio = null;
         let customSoundUrl = '';
 
+        // Sons pré-chargés
+        const preloadedSounds = {
+            birds: new Audio('https://github.com/olibhan-dot/meditation-timer/raw/main/bird-ambience-in-morning-jeff-kaale-1-00-08.mp3'),
+            bowl: new Audio('https://github.com/olibhan-dot/meditation-timer/raw/main/gong-singing-bowl-ding-danijel-zambo-1-00-19.mp3'),
+            chimes: new Audio('https://github.com/olibhan-dot/meditation-timer/raw/main/happy-alert-chimes-danijel-zambo-1-1-00-03.mp3')
+        };
+
+        // Configuration du volume pour tous les sons pré-chargés
+        Object.values(preloadedSounds).forEach(audio => {
+            audio.volume = 0.7;
+            audio.preload = 'auto';
+        });
+
         const circumference = 2 * Math.PI * 110;
 
         // Création du contexte audio
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         
-        // Sons zen simplifiés
+        // Sons disponibles
         const sounds = {
             bell: () => {
                 // Cloche tibétaine douce (tons plus graves et naturels)
@@ -431,6 +447,30 @@
                 });
                 
                 gainNode.connect(audioContext.destination);
+            },
+            
+            birds: () => {
+                // Ambiance oiseaux du matin
+                if (preloadedSounds.birds) {
+                    preloadedSounds.birds.currentTime = 0;
+                    preloadedSounds.birds.play().catch(e => console.log('Erreur lecture oiseaux:', e));
+                }
+            },
+            
+            bowl: () => {
+                // Bol chantant / Gong
+                if (preloadedSounds.bowl) {
+                    preloadedSounds.bowl.currentTime = 0;
+                    preloadedSounds.bowl.play().catch(e => console.log('Erreur lecture bol:', e));
+                }
+            },
+            
+            chimes: () => {
+                // Carillons joyeux
+                if (preloadedSounds.chimes) {
+                    preloadedSounds.chimes.currentTime = 0;
+                    preloadedSounds.chimes.play().catch(e => console.log('Erreur lecture carillons:', e));
+                }
             },
             
             custom: () => {
