@@ -43,7 +43,73 @@
             position: relative;
             width: 240px;
             height: 240px;
-            margin: 0 auto 48px;
+            margin: 0 auto 20px;
+        }
+
+        /* Cercle de respiration */
+        .breathing-circle {
+            width: 80px;
+            height: 80px;
+            border: 2px solid #8DBDB8;
+            border-radius: 50%;
+            margin: 0 auto 28px;
+            background: rgba(141, 189, 184, 0.1);
+            animation: breathingCycle 10s ease-in-out infinite;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes breathingCycle {
+            0% { 
+                transform: scale(1);
+                border-color: #8DBDB8;
+                background: rgba(141, 189, 184, 0.1);
+            }
+            50% { 
+                transform: scale(1.4);
+                border-color: #7AADA8;
+                background: rgba(141, 189, 184, 0.2);
+            }
+            100% { 
+                transform: scale(1);
+                border-color: #8DBDB8;
+                background: rgba(141, 189, 184, 0.1);
+            }
+        }
+
+        .breathing-text {
+            font-size: 0.75rem;
+            color: #6B6B6B;
+            font-weight: 400;
+            animation: breathingTextCycle 10s ease-in-out infinite;
+        }
+
+        @keyframes breathingTextCycle {
+            0%, 45% { 
+                opacity: 1;
+            }
+            47%, 53% {
+                opacity: 0.3;
+            }
+            55%, 100% { 
+                opacity: 1;
+            }
+        }
+
+        .breathing-text::before {
+            content: "Inspirez";
+            animation: breathingContent 10s ease-in-out infinite;
+        }
+
+        @keyframes breathingContent {
+            0%, 45% { 
+                content: "Inspirez";
+            }
+            50%, 95% { 
+                content: "Expirez";
+            }
         }
 
         .progress-ring {
@@ -326,6 +392,11 @@
             </div>
         </div>
 
+        <!-- Cercle de respiration discret -->
+        <div class="breathing-circle">
+            <div class="breathing-text"></div>
+        </div>
+
         <!-- Contrôles de temps -->
         <div class="time-controls" id="timeControls">
             <!-- Heures -->
@@ -370,7 +441,6 @@
             <div class="sound-label">Son de fin</div>
             <div class="sound-options">
                 <button class="sound-btn active" data-sound="bell" onclick="selectSound('bell')" title="Cloche tibétaine">🔔</button>
-                <button class="sound-btn" data-sound="birds" onclick="selectSound('birds')" title="Ambiance oiseaux">🐦</button>
                 <button class="sound-btn" data-sound="bowl" onclick="selectSound('bowl')" title="Bol chantant">🥣</button>
                 <button class="sound-btn" data-sound="chimes" onclick="selectSound('chimes')" title="Carillons joyeux">🎐</button>
                 <button class="sound-btn" data-sound="custom" onclick="selectSound('custom')" title="Son personnalisé">🎵</button>
@@ -401,7 +471,6 @@
 
         // Sons pré-chargés
         const preloadedSounds = {
-            birds: new Audio('https://github.com/olibhan-dot/meditation-timer/raw/main/bird-ambience-in-morning-jeff-kaale-1-00-08.mp3'),
             bowl: new Audio('https://github.com/olibhan-dot/meditation-timer/raw/main/gong-singing-bowl-ding-danijel-zambo-1-00-19.mp3'),
             chimes: new Audio('https://github.com/olibhan-dot/meditation-timer/raw/main/happy-alert-chimes-danijel-zambo-1-1-00-03.mp3')
         };
@@ -451,17 +520,10 @@
                 gainNode.connect(audioContext.destination);
             },
             
-            birds: () => {
-                // Ambiance oiseaux du matin
-                if (preloadedSounds.birds) {
-                    preloadedSounds.birds.currentTime = 0;
-                    preloadedSounds.birds.play().catch(e => console.log('Erreur lecture oiseaux:', e));
-                }
-            },
-            
             bowl: () => {
                 // Bol chantant / Gong
                 if (preloadedSounds.bowl) {
+                    currentlyPlayingAudio = preloadedSounds.bowl;
                     preloadedSounds.bowl.currentTime = 0;
                     preloadedSounds.bowl.play().catch(e => console.log('Erreur lecture bol:', e));
                 }
@@ -470,6 +532,7 @@
             chimes: () => {
                 // Carillons joyeux
                 if (preloadedSounds.chimes) {
+                    currentlyPlayingAudio = preloadedSounds.chimes;
                     preloadedSounds.chimes.currentTime = 0;
                     preloadedSounds.chimes.play().catch(e => console.log('Erreur lecture carillons:', e));
                 }
@@ -478,6 +541,7 @@
             custom: () => {
                 // Son personnalisé depuis URL
                 if (customAudio && customSoundUrl) {
+                    currentlyPlayingAudio = customAudio;
                     customAudio.currentTime = 0;
                     customAudio.play().catch(e => console.log('Erreur lecture audio:', e));
                 }
