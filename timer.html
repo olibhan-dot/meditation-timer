@@ -288,75 +288,6 @@
             line-height: 1.4;
         }
 
-        /* Statistiques de méditation */
-        .meditation-stats {
-            background: #F5F3F0;
-            border-radius: 16px;
-            padding: 20px;
-            margin-top: 24px;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            text-align: center;
-        }
-
-        .stat-item {
-            background: white;
-            padding: 16px 12px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #2D2D2D;
-            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
-            margin-bottom: 4px;
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: #6B6B6B;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 500;
-        }
-
-        .stat-item.highlight {
-            background: linear-gradient(135deg, #8DBDB8, #7AADA8);
-            color: white;
-        }
-
-        .stat-item.highlight .stat-value {
-            color: white;
-        }
-
-        .stat-item.highlight .stat-label {
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .reset-stats {
-            margin-top: 12px;
-            text-align: center;
-        }
-
-        .reset-btn-stats {
-            background: none;
-            border: 1px solid #E5E5E5;
-            color: #9B9B9B;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .reset-btn-stats:hover {
-            border-color: #8DBDB8;
-            color: #8DBDB8;
-        }
-
         .sound-selector {
             margin-bottom: 24px;
             text-align: center;
@@ -522,26 +453,6 @@
 
         <!-- Instructions -->
         <p class="instructions" id="instructions">Réglez votre temps et démarrez</p>
-
-        <!-- Statistiques de méditation -->
-        <div class="meditation-stats">
-            <div class="stat-item">
-                <div class="stat-value" id="totalTime">0h 0m</div>
-                <div class="stat-label">Total</div>
-            </div>
-            <div class="stat-item highlight">
-                <div class="stat-value" id="longestSession">0h 0m</div>
-                <div class="stat-label">Record</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="sessionCount">0</div>
-                <div class="stat-label">Sessions</div>
-            </div>
-        </div>
-        
-        <div class="reset-stats">
-            <button class="reset-btn-stats" onclick="resetStats()">Réinitialiser statistiques</button>
-        </div>
     </div>
 
     <script>
@@ -558,13 +469,6 @@
         let customSoundUrl = '';
         let currentlyPlayingAudio = null; // Pour tracker le son en cours
 
-        // Statistiques de méditation
-        let meditationStats = {
-            totalTime: 0, // en secondes
-            longestSession: 0, // en secondes
-            sessionCount: 0
-        };
-
         // Sons pré-chargés
         const preloadedSounds = {
             bowl: new Audio('https://github.com/olibhan-dot/meditation-timer/raw/main/gong-singing-bowl-ding-danijel-zambo-1-00-19.mp3'),
@@ -578,62 +482,6 @@
         });
 
         const circumference = 2 * Math.PI * 110;
-
-        // Charger les statistiques depuis localStorage
-        function loadStats() {
-            const saved = localStorage.getItem('meditationStats');
-            if (saved) {
-                meditationStats = JSON.parse(saved);
-                updateStatsDisplay();
-            }
-        }
-
-        // Sauvegarder les statistiques
-        function saveStats() {
-            localStorage.setItem('meditationStats', JSON.stringify(meditationStats));
-        }
-
-        // Mettre à jour l'affichage des statistiques
-        function updateStatsDisplay() {
-            // Total en heures et minutes
-            const totalHours = Math.floor(meditationStats.totalTime / 3600);
-            const totalMinutes = Math.floor((meditationStats.totalTime % 3600) / 60);
-            document.getElementById('totalTime').textContent = `${totalHours}h ${totalMinutes}m`;
-
-            // Record en heures et minutes
-            const recordHours = Math.floor(meditationStats.longestSession / 3600);
-            const recordMinutes = Math.floor((meditationStats.longestSession % 3600) / 60);
-            document.getElementById('longestSession').textContent = `${recordHours}h ${recordMinutes}m`;
-
-            // Nombre de sessions
-            document.getElementById('sessionCount').textContent = meditationStats.sessionCount;
-        }
-
-        // Ajouter une session terminée
-        function addCompletedSession(sessionDuration) {
-            meditationStats.totalTime += sessionDuration;
-            meditationStats.sessionCount += 1;
-            
-            if (sessionDuration > meditationStats.longestSession) {
-                meditationStats.longestSession = sessionDuration;
-            }
-            
-            saveStats();
-            updateStatsDisplay();
-        }
-
-        // Réinitialiser les statistiques
-        function resetStats() {
-            if (confirm('Êtes-vous sûr de vouloir réinitialiser toutes vos statistiques ?')) {
-                meditationStats = {
-                    totalTime: 0,
-                    longestSession: 0,
-                    sessionCount: 0
-                };
-                saveStats();
-                updateStatsDisplay();
-            }
-        }
 
         // Création du contexte audio
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -848,10 +696,6 @@
                         clearInterval(timerInterval);
                         isRunning = false;
                         isCompleted = true;
-                        
-                        // Ajouter la session aux statistiques
-                        addCompletedSession(totalTime);
-                        
                         document.getElementById('playBtn').textContent = '↻';
                         document.getElementById('completedText').classList.remove('hidden');
                         document.getElementById('instructions').textContent = 'Session terminée';
@@ -885,7 +729,6 @@
 
         // Initialisation
         updateDisplay();
-        loadStats(); // Charger les statistiques au démarrage
     </script>
 </body>
 </html>
