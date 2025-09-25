@@ -57,18 +57,41 @@
             margin: 0 auto;
         }
 
+        .breathing-text {
+            font-size: 0.9rem;
+            color: #6B6B6B;
+            font-weight: 400;
+            font-family: 'Cinzel', serif;
+            text-align: center;
+            margin-bottom: 4px;
+            animation: breathingTextCycle 10s ease-in-out infinite;
+        }
+
+        @keyframes breathingTextCycle {
+            0%, 45% { opacity: 1; }
+            47%, 53% { opacity: 0.3; }
+            55%, 100% { opacity: 1; }
+        }
+
+        .breathing-text::before {
+            content: "Inspirez";
+            animation: breathingContent 10s ease-in-out infinite;
+        }
+
+        @keyframes breathingContent {
+            0%, 45% { content: "Inspirez"; }
+            50%, 95% { content: "Expirez"; }
+        }
+
         /* Cercle de respiration */
         .breathing-circle {
             width: 65px;
             height: 65px;
             border: 2px solid #8DBDB8;
             border-radius: 50%;
-            margin: 8px auto;
+            margin: 0 auto;
             background: rgba(141, 189, 184, 0.1);
             animation: breathingCycle 10s ease-in-out infinite;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         @keyframes breathingCycle {
@@ -87,30 +110,6 @@
                 border-color: #8DBDB8;
                 background: rgba(141, 189, 184, 0.1);
             }
-        }
-
-        .breathing-text {
-            font-size: 0.9rem;
-            color: #6B6B6B;
-            font-weight: 400;
-            font-family: 'Cinzel', serif;
-            animation: breathingTextCycle 10s ease-in-out infinite;
-        }
-
-        @keyframes breathingTextCycle {
-            0%, 45% { opacity: 1; }
-            47%, 53% { opacity: 0.3; }
-            55%, 100% { opacity: 1; }
-        }
-
-        .breathing-text::before {
-            content: "Inspirez";
-            animation: breathingContent 10s ease-in-out infinite;
-        }
-
-        @keyframes breathingContent {
-            0%, 45% { content: "Inspirez"; }
-            50%, 95% { content: "Expirez"; }
         }
 
         .progress-ring {
@@ -373,8 +372,8 @@
             }
             
             .breathing-circle {
-                width: 40px;
-                height: 40px;
+                width: 55px;
+                height: 55px;
             }
             
             .title {
@@ -420,10 +419,9 @@
             </div>
         </div>
 
-        <!-- Cercle de respiration discret -->
-        <div class="breathing-circle">
-            <div class="breathing-text"></div>
-        </div>
+        <!-- Texte et cercle de respiration -->
+        <div class="breathing-text"></div>
+        <div class="breathing-circle"></div>
 
         <!-- Contrôles de temps -->
         <div class="time-controls" id="timeControls">
