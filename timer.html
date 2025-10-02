@@ -92,6 +92,8 @@
             margin: 0 auto;
             background: rgba(141, 189, 184, 0.1);
             animation: breathingCycle 10s ease-in-out infinite;
+            aspect-ratio: 1 / 1;
+            flex-shrink: 0;
         }
 
         @keyframes breathingCycle {
@@ -532,10 +534,10 @@
                 oscillator3.type = 'sine';
                 
                 gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-                gainNode.gain.linearRampToValueAtTime(0.15, audioContext.currentTime + 0.05);
-                gainNode.gain.exponentialRampToValueAtTime(0.08, audioContext.currentTime + 0.5);
-                gainNode.gain.exponentialRampToValueAtTime(0.02, audioContext.currentTime + 2.0);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 5.0);
+                gainNode.gain.linearRampToValueAtTime(0.195, audioContext.currentTime + 0.05);
+                gainNode.gain.exponentialRampToValueAtTime(0.104, audioContext.currentTime + 0.5);
+                gainNode.gain.exponentialRampToValueAtTime(0.026, audioContext.currentTime + 2.0);
+                gainNode.gain.exponentialRampToValueAtTime(0.0013, audioContext.currentTime + 5.0);
                 
                 [oscillator1, oscillator2, oscillator3].forEach(osc => {
                     osc.connect(gainNode);
