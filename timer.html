@@ -235,289 +235,288 @@
             width: 56px;
             height: 56px;
             border-radius: 50%;
+            background: #8DBDB8;
             border: none;
+            color: white;
+            font-size: 1.3rem;
             cursor: pointer;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
-            font-size: 20px;
             user-select: none;
         }
 
-        .play-btn {
-            background: #8DBDB8;
-            color: white;
-            box-shadow: 0 4px 16px rgba(141, 189, 184, 0.3);
-        }
-
-        .play-btn:active {
+        .control-btn:active {
             transform: scale(0.95);
+            background: #7AADA8;
         }
 
-        .reset-btn {
-            background: #F5F3F0;
+        .secondary-btn {
+            background: #E5E5E5;
             color: #6B6B6B;
+            width: 48px;
+            height: 48px;
+            font-size: 1.1rem;
         }
 
-        .reset-btn:active {
-            transform: scale(0.95);
+        .secondary-btn:active {
+            background: #D5D5D5;
         }
 
         .instructions {
-            color: #9B9B9B;
-            font-size: 1.05rem;
+            color: #6B6B6B;
+            font-size: 0.95rem;
             font-weight: 400;
             font-family: 'Cinzel', serif;
-            line-height: 1.2;
+            margin: 4px 0;
         }
 
         .sound-selector {
-            text-align: center;
+            background: #F5F3F0;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 8px 0;
         }
 
-        .sound-label {
+        .section-title {
             color: #6B6B6B;
-            font-size: 0.95rem;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-size: 0.9rem;
             font-weight: 500;
+            margin-bottom: 8px;
             font-family: 'Cinzel', serif;
         }
 
         .sound-options {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 8px;
         }
 
         .sound-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #F5F3F0;
-            border: 2px solid transparent;
+            padding: 8px;
+            border: 1px solid #E5E5E5;
+            border-radius: 8px;
+            background: white;
+            color: #6B6B6B;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             transition: all 0.2s ease;
-            font-size: 16px;
-            user-select: none;
         }
 
-        .sound-btn.active {
+        .sound-btn:active, .sound-btn.active {
+            background: #8DBDB8;
+            color: white;
             border-color: #8DBDB8;
-            background: rgba(141, 189, 184, 0.1);
-        }
-
-        .sound-btn:active {
-            transform: scale(0.95);
         }
 
         .custom-sound-input {
+            display: none;
             margin-top: 8px;
         }
 
         .custom-sound-input input {
             width: 100%;
-            max-width: 240px;
-            padding: 6px 10px;
+            padding: 8px;
             border: 1px solid #E5E5E5;
             border-radius: 8px;
-            font-size: 1.05rem;
             font-family: 'Cinzel', serif;
-            background: white;
-            color: #2D2D2D;
+            font-size: 0.85rem;
         }
 
-        .custom-sound-input input:focus {
-            outline: none;
-            border-color: #8DBDB8;
+        .custom-sound-input button {
+            margin-top: 4px;
+            padding: 6px 12px;
+            background: #8DBDB8;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            cursor: pointer;
         }
 
         .hidden {
+            display: none !important;
+        }
+
+        .breathing {
+            animation: breathingRing 4s ease-in-out infinite;
+        }
+
+        @keyframes breathingRing {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Nouveaux styles pour la section Gong */
+        .gong-selector {
+            background: #F5F3F0;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 8px 0;
+        }
+
+        .gong-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .gong-btn {
+            padding: 8px;
+            border: 1px solid #E5E5E5;
+            border-radius: 8px;
+            background: white;
+            color: #6B6B6B;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .gong-btn:active, .gong-btn.active {
+            background: #B8A58D;
+            color: white;
+            border-color: #B8A58D;
+        }
+
+        .gong-indicator {
             display: none;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 20px;
+            height: 20px;
+            background: #B8A58D;
+            border-radius: 50%;
+            border: 2px solid white;
+            animation: gongPulse 1s ease-in-out;
         }
 
-        /* Animation subtile pour le cercle au repos */
-        @keyframes breathe {
-            0%, 100% { transform: rotate(-90deg) scale(1); }
-            50% { transform: rotate(-90deg) scale(1.01); }
-        }
-
-        .progress-ring.breathing {
-            animation: breathe 4s ease-in-out infinite;
-        }
-
-        /* Pour très petits écrans */
-        @media (max-height: 600px) {
-            .timer-container {
-                padding: 12px;
-                gap: 8px;
-            }
-            
-            .circle-container {
-                width: 140px;
-                height: 140px;
-            }
-            
-            .time-text {
-                font-size: 1.8rem;
-            }
-            
-            .control-btn {
-                width: 48px;
-                height: 48px;
-            }
-            
-            .breathing-circle {
-                width: 55px;
-                height: 55px;
-            }
-            
-            .title {
-                font-size: 1.3rem;
-                margin: 4px 0;
-            }
-        }
-
-        /* Pour écrans moyens */
-        @media (min-height: 700px) {
-            .circle-container {
-                width: 180px;
-                height: 180px;
-            }
-            
-            .timer-container {
-                padding: 24px;
-                gap: 20px;
-            }
-            
-            .control-btn {
-                width: 64px;
-                height: 64px;
-            }
+        @keyframes gongPulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
         }
     </style>
 </head>
 <body>
     <div class="timer-container">
-        <!-- Titre -->
         <h1 class="title">Méditation</h1>
-
-        <!-- Cercle de progression -->
-        <div class="circle-container">
-            <svg class="progress-ring breathing" width="160" height="160" id="progressRing" viewBox="0 0 160 160">
-                <circle class="progress-circle-bg" cx="80" cy="80" r="75"></circle>
-                <circle class="progress-circle" cx="80" cy="80" r="75" id="progressCircle"></circle>
-            </svg>
-            
-            <div class="time-display">
-                <div class="time-text" id="timeDisplay">00:05:00</div>
-                <div class="completed-text hidden" id="completedText">Terminé</div>
-            </div>
-        </div>
-
-        <!-- Texte et cercle de respiration -->
+        
+        <p class="instructions" id="instructions">Réglez votre temps et démarrez</p>
+        
         <div class="breathing-text"></div>
         <div class="breathing-circle"></div>
-
-        <!-- Contrôles de temps -->
+        
+        <div class="circle-container">
+            <svg class="progress-ring breathing" id="progressRing" width="160" height="160">
+                <circle class="progress-circle-bg" cx="80" cy="80" r="75"></circle>
+                <circle class="progress-circle" id="progressCircle" cx="80" cy="80" r="75"></circle>
+            </svg>
+            <div class="time-display">
+                <div class="time-text" id="timeDisplay">00:05:00</div>
+                <div class="completed-text hidden" id="completedText">Terminé ✓</div>
+            </div>
+            <div class="gong-indicator" id="gongIndicator"></div>
+        </div>
+        
         <div class="time-controls" id="timeControls">
-            <!-- Heures -->
             <div class="time-control">
                 <div class="time-label">Heures</div>
                 <div class="time-adjuster">
-                    <button class="time-btn" onclick="adjustTime('hours', -1)">−</button>
-                    <span class="time-value" id="hoursDisplay">0</span>
-                    <button class="time-btn" onclick="adjustTime('hours', 1)">+</button>
+                    <div class="time-btn" onclick="adjustTime('hours', -1)">−</div>
+                    <div class="time-value" id="hoursDisplay">0</div>
+                    <div class="time-btn" onclick="adjustTime('hours', 1)">+</div>
                 </div>
             </div>
-
-            <!-- Minutes -->
             <div class="time-control">
                 <div class="time-label">Minutes</div>
                 <div class="time-adjuster">
-                    <button class="time-btn" onclick="adjustTime('minutes', -1)">−</button>
-                    <span class="time-value" id="minutesDisplay">5</span>
-                    <button class="time-btn" onclick="adjustTime('minutes', 1)">+</button>
+                    <div class="time-btn" onclick="adjustTime('minutes', -1)">−</div>
+                    <div class="time-value" id="minutesDisplay">5</div>
+                    <div class="time-btn" onclick="adjustTime('minutes', 1)">+</div>
                 </div>
             </div>
-
-            <!-- Secondes -->
             <div class="time-control">
                 <div class="time-label">Secondes</div>
                 <div class="time-adjuster">
-                    <button class="time-btn" onclick="adjustTime('seconds', -1)">−</button>
-                    <span class="time-value" id="secondsDisplay">0</span>
-                    <button class="time-btn" onclick="adjustTime('seconds', 1)">+</button>
+                    <div class="time-btn" onclick="adjustTime('seconds', -1)">−</div>
+                    <div class="time-value" id="secondsDisplay">0</div>
+                    <div class="time-btn" onclick="adjustTime('seconds', 1)">+</div>
                 </div>
             </div>
         </div>
-
-        <!-- Boutons principaux -->
+        
         <div class="main-controls">
-            <button class="control-btn play-btn" id="playBtn" onclick="toggleTimer()">▶</button>
-            <button class="control-btn reset-btn hidden" id="resetBtn" onclick="resetTimer()">↻</button>
+            <button class="control-btn" id="playBtn" onclick="toggleTimer()">▶</button>
+            <button class="control-btn secondary-btn hidden" id="resetBtn" onclick="resetTimer()">↻</button>
         </div>
-
-        <!-- Sélecteur de son -->
+        
         <div class="sound-selector" id="soundSelector">
-            <div class="sound-label">Son de fin</div>
+            <div class="section-title">Son de fin</div>
             <div class="sound-options">
-                <button class="sound-btn active" data-sound="bell" onclick="selectSound('bell')" title="Cloche tibétaine">🔔</button>
-                <button class="sound-btn" data-sound="bowl" onclick="selectSound('bowl')" title="Bol chantant">🥣</button>
-                <button class="sound-btn" data-sound="chimes" onclick="selectSound('chimes')" title="Carillons joyeux">🎐</button>
-                <button class="sound-btn" data-sound="custom" onclick="selectSound('custom')" title="Son personnalisé">🎵</button>
-                <button class="sound-btn" data-sound="none" onclick="selectSound('none')" title="Silencieux">🔇</button>
+                <button class="sound-btn active" data-sound="bell" onclick="selectSound('bell')">Cloche</button>
+                <button class="sound-btn" data-sound="bowl" onclick="selectSound('bowl')">Bol</button>
+                <button class="sound-btn" data-sound="chimes" onclick="selectSound('chimes')">Carillon</button>
+                <button class="sound-btn" data-sound="custom" onclick="selectSound('custom')">Perso</button>
+                <button class="sound-btn" data-sound="none" onclick="selectSound('none')">Aucun</button>
             </div>
-            <div class="custom-sound-input" id="customSoundInput" style="display: none;">
-                <input type="url" placeholder="URL de votre son (MP3, WAV...)" id="customSoundUrl" onchange="updateCustomSound()">
+            <div class="custom-sound-input" id="customSoundInput">
+                <input type="text" id="customSoundUrl" placeholder="URL du fichier audio">
+                <button onclick="updateCustomSound()">Charger</button>
             </div>
         </div>
 
-        <!-- Instructions -->
-        <p class="instructions" id="instructions">Réglez votre temps et démarrez</p>
+        <div class="gong-selector" id="gongSelector">
+            <div class="section-title">Gong intermédiaire</div>
+            <div class="gong-options">
+                <button class="gong-btn active" data-gong="none" onclick="selectGongInterval('none')">Aucun</button>
+                <button class="gong-btn" data-gong="5" onclick="selectGongInterval(5)">5 min</button>
+                <button class="gong-btn" data-gong="10" onclick="selectGongInterval(10)">10 min</button>
+                <button class="gong-btn" data-gong="20" onclick="selectGongInterval(20)">20 min</button>
+            </div>
+        </div>
     </div>
 
     <script>
         let hours = 0;
         let minutes = 5;
         let seconds = 0;
-        let totalTime = 5 * 60;
-        let timeLeft = 5 * 60;
+        let totalTime = minutes * 60;
+        let timeLeft = totalTime;
         let isRunning = false;
         let isCompleted = false;
-        let timerInterval;
+        let timerInterval = null;
         let selectedSound = 'bell';
-        let customAudio = null;
         let customSoundUrl = '';
+        let customAudio = null;
         let currentlyPlayingAudio = null;
+
+        // Variables pour le gong
+        let gongInterval = null; // null, 5, 10, ou 20 (minutes)
+        let lastGongTime = 0;
 
         // Sons pré-chargés
         const preloadedSounds = {
-            bowl: new Audio('https://github.com/olibhan-dot/meditation-timer/raw/main/gong-singing-bowl-ding-danijel-zambo-1-00-19.mp3'),
-            chimes: new Audio('https://github.com/olibhan-dot/meditation-timer/raw/main/happy-alert-chimes-danijel-zambo-1-1-00-03.mp3')
+            bowl: new Audio('https://assets.mixkit.co/active_storage/sfx/2868/2868-preview.mp3'),
+            chimes: new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3')
         };
 
-        // Configuration du volume pour tous les sons pré-chargés
+        // Précharger les sons
         Object.values(preloadedSounds).forEach(audio => {
             audio.volume = 0.7;
-            audio.preload = 'auto';
+            audio.load();
         });
 
-        // Calcul dynamique de la circonférence basé sur la taille réelle du SVG
-        const svgElement = document.getElementById('progressRing');
-        const radius = 75; // Rayon du cercle
+        const radius = 75;
         const circumference = 2 * Math.PI * radius;
 
-        // Création du contexte audio
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         
-        // Sons disponibles
         const sounds = {
             bell: () => {
                 const gainNode = audioContext.createGain();
@@ -622,6 +621,43 @@
             }
         }
 
+        function selectGongInterval(interval) {
+            gongInterval = interval === 'none' ? null : interval;
+            
+            document.querySelectorAll('.gong-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            const dataValue = interval === 'none' ? 'none' : interval.toString();
+            document.querySelector(`[data-gong="${dataValue}"]`).classList.add('active');
+        }
+
+        function playGongSound() {
+            const indicator = document.getElementById('gongIndicator');
+            indicator.style.display = 'block';
+            
+            // Jouer le son de cloche pour le gong
+            sounds.bell();
+            
+            // Masquer l'indicateur après l'animation
+            setTimeout(() => {
+                indicator.style.display = 'none';
+            }, 1000);
+        }
+
+        function checkGongInterval() {
+            if (!gongInterval || !isRunning) return;
+            
+            const elapsedTime = totalTime - timeLeft;
+            const gongIntervalSeconds = gongInterval * 60;
+            
+            // Vérifier si on a atteint un multiple de l'intervalle
+            if (elapsedTime > 0 && elapsedTime % gongIntervalSeconds === 0 && elapsedTime !== lastGongTime) {
+                lastGongTime = elapsedTime;
+                playGongSound();
+            }
+        }
+
         function stopAllSounds() {
             if (currentlyPlayingAudio) {
                 currentlyPlayingAudio.pause();
@@ -699,13 +735,18 @@
                 document.getElementById('playBtn').textContent = '⏸';
                 document.getElementById('timeControls').classList.add('hidden');
                 document.getElementById('soundSelector').classList.add('hidden');
+                document.getElementById('gongSelector').classList.add('hidden');
                 document.getElementById('resetBtn').classList.remove('hidden');
                 document.getElementById('instructions').textContent = 'Méditation en cours...';
                 document.getElementById('progressRing').classList.remove('breathing');
                 
+                // Réinitialiser le compteur de gong
+                lastGongTime = 0;
+                
                 timerInterval = setInterval(() => {
                     timeLeft--;
                     updateDisplay();
+                    checkGongInterval();
                     
                     if (timeLeft <= 0) {
                         clearInterval(timerInterval);
@@ -730,10 +771,12 @@
             isCompleted = false;
             totalTime = hours * 3600 + minutes * 60 + seconds;
             timeLeft = totalTime;
+            lastGongTime = 0;
             
             document.getElementById('playBtn').textContent = '▶';
             document.getElementById('timeControls').classList.remove('hidden');
             document.getElementById('soundSelector').classList.remove('hidden');
+            document.getElementById('gongSelector').classList.remove('hidden');
             document.getElementById('resetBtn').classList.add('hidden');
             document.getElementById('completedText').classList.add('hidden');
             document.getElementById('instructions').textContent = 'Réglez votre temps et démarrez';
