@@ -411,6 +411,15 @@
             50% { transform: scale(1.2); opacity: 0.7; }
             100% { transform: scale(1); opacity: 1; }
         }
+
+        /* Style pour la phase de préparation */
+        .preparation-text {
+            color: #B8A58D;
+            font-size: 0.9rem;
+            font-weight: 400;
+            font-family: 'Cinzel', serif;
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body>
@@ -430,6 +439,7 @@
             <div class="time-display">
                 <div class="time-text" id="timeDisplay">00:05:00</div>
                 <div class="completed-text hidden" id="completedText">Terminé ✓</div>
+                <div class="preparation-text hidden" id="preparationText">Installation...</div>
             </div>
             <div class="gong-indicator" id="gongIndicator"></div>
         </div>
@@ -507,8 +517,13 @@
         let currentlyPlayingAudio = null;
 
         // Variables pour le gong
-        let gongInterval = null; // null, 5, 10, ou 20 (minutes)
+        let gongInterval = null;
         let lastGongTime = 0;
+
+        // NOUVEAU : Variables pour la phase de préparation
+        let isPreparationPhase = false;
+        let preparationTime = 20; // 20 secondes
+        let preparationLeft = preparationTime;
 
         // Sons pré-chargés
         const preloadedSounds = {
@@ -677,7 +692,7 @@
             const indicator = document.getElementById('gongIndicator');
             indicator.style.display = 'block';
             
-            // Jouer le son de gong tibétain pour les intervalles
+            // Jouer le son de gong tibétain
             if (preloadedSounds.gong) {
                 preloadedSounds.gong.currentTime = 0;
                 preloadedSounds.gong.play().catch(e => console.log('Erreur lecture gong:', e));
@@ -690,12 +705,11 @@
         }
 
         function checkGongInterval() {
-            if (!gongInterval || !isRunning) return;
+            if (!gongInterval || !isRunning || isPreparationPhase) return;
             
             const elapsedTime = totalTime - timeLeft;
             const gongIntervalSeconds = gongInterval * 60;
             
-            // Vérifier si on a atteint un multiple de l'intervalle
             if (elapsedTime > 0 && elapsedTime % gongIntervalSeconds === 0 && elapsedTime !== lastGongTime) {
                 lastGongTime = elapsedTime;
                 playGongSound();
@@ -737,14 +751,28 @@
             document.getElementById('minutesDisplay').textContent = minutes;
             document.getElementById('secondsDisplay').textContent = seconds;
             
-            const h = Math.floor(timeLeft / 3600);
-            const m = Math.floor((timeLeft % 3600) / 60);
-            const s = timeLeft % 60;
+            // MODIFIÉ : Gestion de l'affichage selon la phase
+            if (isPreparationPhase) {
+                // Phase de préparation : afficher seulement les secondes
+                document.getElementById('timeDisplay').textContent = `${preparationLeft}s`;
+            } else {
+                // Phase normale : affichage HH:MM:SS
+                const h = Math.floor(timeLeft / 3600);
+                const m = Math.floor((timeLeft % 3600) / 60);
+                const s = timeLeft % 60;
+                
+                document.getElementById('timeDisplay').textContent = 
+                    `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            }
             
-            document.getElementById('timeDisplay').textContent = 
-                `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            // MODIFIÉ : Calcul de la progression selon la phase
+            let progressPercentage = 0;
+            if (isPreparationPhase) {
+                progressPercentage = ((preparationTime - preparationLeft) / preparationTime) * 100;
+            } else {
+                progressPercentage = totalTime > 0 ? ((totalTime - timeLeft) / totalTime) * 100 : 0;
+            }
             
-            const progressPercentage = totalTime > 0 ? ((totalTime - timeLeft) / totalTime) * 100 : 0;
             const offset = circumference - (progressPercentage / 100) * circumference;
             const circle = document.getElementById('progressCircle');
             circle.style.strokeDasharray = circumference;
@@ -781,30 +809,60 @@
                 document.getElementById('soundSelector').classList.add('hidden');
                 document.getElementById('gongSelector').classList.add('hidden');
                 document.getElementById('resetBtn').classList.remove('hidden');
-                document.getElementById('instructions').textContent = 'Méditation en cours...';
                 document.getElementById('progressRing').classList.remove('breathing');
                 document.body.classList.add('meditation-active');
                 
-                // Réinitialiser le compteur de gong
+                // Réinitialiser les compteurs
                 lastGongTime = 0;
                 
+                // NOUVEAU : Démarrer par la phase de préparation
+                isPreparationPhase = true;
+                preparationLeft = preparationTime;
+                
+                // Afficher le texte et l'instruction de préparation
+                document.getElementById('preparationText').classList.remove('hidden');
+                document.getElementById('timeDisplay').classList.add('hidden');
+                document.getElementById('instructions').textContent = 'Installez-vous confortablement...';
+                
+                // Jouer le gong de début
+                playGongSound();
+                
                 timerInterval = setInterval(() => {
-                    timeLeft--;
-                    updateDisplay();
-                    checkGongInterval();
-                    
-                    if (timeLeft <= 0) {
-                        clearInterval(timerInterval);
-                        isRunning = false;
-                        isCompleted = true;
-                        document.getElementById('playBtn').textContent = '↻';
-                        document.getElementById('completedText').classList.remove('hidden');
-                        document.getElementById('instructions').textContent = 'Session terminée';
-                        document.body.classList.remove('meditation-active');
-                        playCompletionSound();
+                    if (isPreparationPhase) {
+                        // Phase de préparation
+                        preparationLeft--;
+                        updateDisplay();
+                        
+                        if (preparationLeft <= 0) {
+                            // Fin de la préparation
+                            isPreparationPhase = false;
+                            document.getElementById('preparationText').classList.add('hidden');
+                            document.getElementById('timeDisplay').classList.remove('hidden');
+                            document.getElementById('instructions').textContent = 'Méditation en cours...';
+                            
+                            // Jouer le gong de transition
+                            playGongSound();
+                        }
+                    } else {
+                        // Timer principal de méditation
+                        timeLeft--;
+                        updateDisplay();
+                        checkGongInterval();
+                        
+                        if (timeLeft <= 0) {
+                            clearInterval(timerInterval);
+                            isRunning = false;
+                            isCompleted = true;
+                            document.getElementById('playBtn').textContent = '↻';
+                            document.getElementById('completedText').classList.remove('hidden');
+                            document.getElementById('instructions').textContent = 'Session terminée';
+                            document.body.classList.remove('meditation-active');
+                            playCompletionSound();
+                        }
                     }
                 }, 1000);
             } else {
+                // Pause
                 clearInterval(timerInterval);
                 document.getElementById('playBtn').textContent = '▶';
                 document.getElementById('instructions').textContent = 'En pause';
@@ -816,6 +874,8 @@
             clearInterval(timerInterval);
             isRunning = false;
             isCompleted = false;
+            isPreparationPhase = false;
+            preparationLeft = preparationTime;
             totalTime = hours * 3600 + minutes * 60 + seconds;
             timeLeft = totalTime;
             lastGongTime = 0;
@@ -826,6 +886,8 @@
             document.getElementById('gongSelector').classList.remove('hidden');
             document.getElementById('resetBtn').classList.add('hidden');
             document.getElementById('completedText').classList.add('hidden');
+            document.getElementById('preparationText').classList.add('hidden');
+            document.getElementById('timeDisplay').classList.remove('hidden');
             document.getElementById('instructions').textContent = 'Réglez votre temps et démarrez';
             document.getElementById('progressRing').classList.add('breathing');
             document.body.classList.remove('meditation-active');
