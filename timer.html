@@ -527,6 +527,7 @@
 
         // Sons pré-chargés
         const preloadedSounds = {
+            bell: new Audio('https://xffz-rj1a-trrq.p7.xano.io/vault/HcWnNax0/flHgabmZYBNQLLdVwj-i9gwq4GU/PgrZzA../gong-hit-smartsound-fx-1-00-10.mp3'),
             bowl: new Audio('https://olibhan-dot.github.io/meditation-timer/gong-singing-bowl-ding-danijel-zambo-1-00-19.mp3'),
             melody: new Audio('https://olibhan-dot.github.io/meditation-timer/calm-meditation-intro-music-ambience-om-fx-1-00-15.mp3'),
             gong: new Audio('https://olibhan-dot.github.io/meditation-timer/tibetan-bowl-hit-om-fx-low-2-00-07.mp3')
@@ -545,32 +546,11 @@
         
         const sounds = {
             bell: () => {
-                const gainNode = audioContext.createGain();
-                const oscillator1 = audioContext.createOscillator();
-                const oscillator2 = audioContext.createOscillator();
-                const oscillator3 = audioContext.createOscillator();
-                
-                oscillator1.frequency.setValueAtTime(220, audioContext.currentTime);
-                oscillator2.frequency.setValueAtTime(277.18, audioContext.currentTime);
-                oscillator3.frequency.setValueAtTime(329.63, audioContext.currentTime);
-                
-                oscillator1.type = 'sine';
-                oscillator2.type = 'sine';
-                oscillator3.type = 'sine';
-                
-                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-                gainNode.gain.linearRampToValueAtTime(0.2535, audioContext.currentTime + 0.05);
-                gainNode.gain.exponentialRampToValueAtTime(0.1352, audioContext.currentTime + 0.5);
-                gainNode.gain.exponentialRampToValueAtTime(0.0338, audioContext.currentTime + 2.0);
-                gainNode.gain.exponentialRampToValueAtTime(0.00169, audioContext.currentTime + 5.0);
-                
-                [oscillator1, oscillator2, oscillator3].forEach(osc => {
-                    osc.connect(gainNode);
-                    osc.start(audioContext.currentTime);
-                    osc.stop(audioContext.currentTime + 5);
-                });
-                
-                gainNode.connect(audioContext.destination);
+                if (preloadedSounds.bell) {
+                    currentlyPlayingAudio = preloadedSounds.bell;
+                    preloadedSounds.bell.currentTime = 0;
+                    preloadedSounds.bell.play().catch(e => console.log('Erreur lecture bell:', e));
+                }
             },
             
             gong: () => {
