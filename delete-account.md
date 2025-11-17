@@ -7,4 +7,4 @@
   <li>Confirmez</li>
 </ol>
 <p>Vos données seront supprimées immédiatement.</p>
-<p>Questions ? Email: support@aube-app.com</p>
+<p>Questions ? Email: contact@sebastien-brumeau.fr</p>
