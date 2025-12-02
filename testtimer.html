@@ -63,61 +63,9 @@
             margin: 0 auto;
         }
 
-        .breathing-text {
-            font-size: 0.9rem;
-            color: #6B6B6B;
-            font-weight: 400;
-            font-family: 'Cinzel', serif;
-            text-align: center;
-            margin-bottom: 4px;
-            animation: breathingTextCycle 10s ease-in-out infinite;
-        }
 
-        @keyframes breathingTextCycle {
-            0%, 45% { opacity: 1; }
-            47%, 53% { opacity: 0.3; }
-            55%, 100% { opacity: 1; }
-        }
 
-        .breathing-text::before {
-            content: "Inspirez";
-            animation: breathingContent 10s ease-in-out infinite;
-        }
 
-        @keyframes breathingContent {
-            0%, 45% { content: "Inspirez"; }
-            50%, 95% { content: "Expirez"; }
-        }
-
-        .breathing-circle {
-            width: 65px;
-            height: 65px;
-            border: 2px solid #8DBDB8;
-            border-radius: 50%;
-            margin: 0 auto;
-            background: rgba(141, 189, 184, 0.1);
-            animation: breathingCycle 10s ease-in-out infinite;
-            aspect-ratio: 1 / 1;
-            flex-shrink: 0;
-        }
-
-        @keyframes breathingCycle {
-            0% { 
-                transform: scale(1);
-                border-color: #8DBDB8;
-                background: rgba(141, 189, 184, 0.1);
-            }
-            50% { 
-                transform: scale(1.3);
-                border-color: #7AADA8;
-                background: rgba(141, 189, 184, 0.2);
-            }
-            100% { 
-                transform: scale(1);
-                border-color: #8DBDB8;
-                background: rgba(141, 189, 184, 0.1);
-            }
-        }
 
         .progress-ring {
             transform: rotate(-90deg);
@@ -361,30 +309,31 @@
             padding: 12px;
             border-radius: 12px;
             margin: 8px 0;
+            text-align: center;
         }
 
-        .gong-options {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
+        .gong-control {
+            display: flex;
+            justify-content: center;
+        }
+
+        .gong-adjuster {
+            display: flex;
+            align-items: center;
             gap: 8px;
-        }
-
-        .gong-btn {
-            padding: 8px;
-            border: 1px solid #E5E5E5;
-            border-radius: 8px;
             background: white;
-            color: #6B6B6B;
-            font-family: 'Cinzel', serif;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid #E5E5E5;
         }
 
-        .gong-btn:active, .gong-btn.active {
-            background: #B8A58D;
-            color: white;
-            border-color: #B8A58D;
+        .gong-value {
+            color: #2D2D2D;
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            font-weight: 400;
+            min-width: 80px;
+            text-align: center;
         }
 
         .gong-indicator {
@@ -434,9 +383,6 @@
         <h1 class="title">Méditation</h1>
         
         <p class="instructions" id="instructions">Réglez votre temps et démarrez</p>
-        
-        <div class="breathing-text"></div>
-        <div class="breathing-circle"></div>
         
         <div class="circle-container">
             <svg class="progress-ring breathing" id="progressRing" width="160" height="160">
@@ -500,11 +446,12 @@
 
         <div class="gong-selector" id="gongSelector">
             <div class="section-title">Gong intermédiaire</div>
-            <div class="gong-options">
-                <button class="gong-btn active" data-gong="none" onclick="selectGongInterval('none')">Aucun</button>
-                <button class="gong-btn" data-gong="5" onclick="selectGongInterval(5)">5 min</button>
-                <button class="gong-btn" data-gong="10" onclick="selectGongInterval(10)">10 min</button>
-                <button class="gong-btn" data-gong="20" onclick="selectGongInterval(20)">20 min</button>
+            <div class="gong-control">
+                <div class="gong-adjuster">
+                    <div class="time-btn" onclick="adjustGongInterval(-1)">−</div>
+                    <div class="gong-value" id="gongDisplay">Aucun</div>
+                    <div class="time-btn" onclick="adjustGongInterval(1)">+</div>
+                </div>
             </div>
         </div>
 
@@ -602,10 +549,11 @@
         let preparationLeft = preparationTime;
 
         const preloadedSounds = {
-            bell: new Audio('https://xffz-rj1a-trrq.p7.xano.io/vault/HcWnNax0/flHgabmZYBNQLLdVwj-i9gwq4GU/PgrZzA../gong-hit-smartsound-fx-1-00-10.mp3'),
-            bowl: new Audio('https://olibhan-dot.github.io/meditation-timer/gong-singing-bowl-ding-danijel-zambo-1-00-19.mp3'),
-            melody: new Audio('https://olibhan-dot.github.io/meditation-timer/calm-meditation-intro-music-ambience-om-fx-1-00-15.mp3'),
-            gong: new Audio('https://olibhan-dot.github.io/meditation-timer/tibetan-bowl-hit-om-fx-low-2-00-07.mp3')
+            // URLs relatives au repo GitHub Pages
+            bell: new Audio('./gong-hit-smartsound-fx-1-00-10.mp3'),
+            bowl: new Audio('./gong-singing-bowl-ding-danijel-zambo-1-00-19.mp3'),
+            melody: new Audio('./calm-meditation-intro-music-ambience-om-fx-1-00-15.mp3'),
+            gong: new Audio('./tibetan-bowl-hit-om-fx-low-2-00-07.mp3')
         };
 
         Object.values(preloadedSounds).forEach(audio => {
@@ -703,6 +651,31 @@
             
             const dataValue = interval === 'none' ? 'none' : interval.toString();
             document.querySelector(`[data-gong="${dataValue}"]`).classList.add('active');
+        }
+
+        function adjustGongInterval(delta) {
+            if (isRunning) return;
+
+            if (gongInterval === null) {
+                // Si aucun gong, démarrer à 5 min
+                gongInterval = 5;
+            } else {
+                // Ajuster par 1 minute (min: 1, max: 120)
+                gongInterval = Math.max(1, Math.min(120, gongInterval + delta));
+            }
+
+            updateGongDisplay();
+        }
+
+        function updateGongDisplay() {
+            const display = document.getElementById('gongDisplay');
+            if (gongInterval === null) {
+                display.textContent = 'Aucun';
+                display.style.color = '#6B6B6B';
+            } else {
+                display.textContent = `${gongInterval} min`;
+                display.style.color = '#B8A58D';
+            }
         }
 
         function playSound(soundType) {
@@ -984,6 +957,7 @@
 
         // Initialisation
         updateDisplay();
+        updateGongDisplay();
 
         // Nettoyage au fermeture
         window.addEventListener('beforeunload', () => {
@@ -991,4 +965,4 @@
         });
     </script>
 </body>
-</html>
+</html
