@@ -32,6 +32,10 @@
             width: 100%;
         }
 
+        body.meditation-active .timer-container {
+            overflow: hidden;
+        }
+
         .timer-container {
             background: white;
             border-radius: 24px;
@@ -62,10 +66,6 @@
             height: 160px;
             margin: 0 auto;
         }
-
-
-
-
 
         .progress-ring {
             transform: rotate(-90deg);
@@ -309,7 +309,6 @@
             padding: 12px;
             border-radius: 12px;
             margin: 8px 0;
-            text-align: center;
         }
 
         .gong-control {
@@ -321,10 +320,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            background: white;
-            padding: 8px 16px;
-            border-radius: 12px;
-            border: 1px solid #E5E5E5;
         }
 
         .gong-value {
@@ -332,7 +327,7 @@
             font-family: 'Cinzel', serif;
             font-size: 1.3rem;
             font-weight: 400;
-            min-width: 80px;
+            min-width: 70px;
             text-align: center;
         }
 
@@ -361,20 +356,6 @@
             font-weight: 400;
             font-family: 'Cinzel', serif;
             margin-top: 4px;
-        }
-
-        .debug-info {
-            background: #fff3cd;
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 0.75rem;
-            color: #856404;
-            display: none;
-            margin-top: 8px;
-        }
-
-        .debug-info.visible {
-            display: block;
         }
     </style>
 </head>
@@ -454,8 +435,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="debug-info" id="debugInfo"></div>
     </div>
 
     <script>
@@ -467,8 +446,6 @@
                 if ('wakeLock' in navigator) {
                     wakeLock = await navigator.wakeLock.request('screen');
                     console.log('✓ Wake Lock acquired - écran restera actif');
-                    
-                    // Réacquérir le wakelock si l'utilisateur revient de l'arrière-plan
                     document.addEventListener('visibilitychange', handleVisibilityChange);
                 } else {
                     console.warn('Wake Lock API non supportée sur cet appareil');
@@ -499,7 +476,6 @@
                 if (isRunning && wakeLock === null) {
                     acquireWakeLock();
                 }
-                // Vérifier que l'AudioContext est toujours actif
                 if (audioContext && audioContext.state === 'suspended') {
                     console.log('AudioContext suspendu - tentative de reprise...');
                     audioContext.resume().catch(e => console.warn('Impossible de reprendre AudioContext:', e));
@@ -544,12 +520,12 @@
 
         let gongInterval = null;
         let lastGongTime = 0;
+
         let isPreparationPhase = false;
         let preparationTime = 20;
         let preparationLeft = preparationTime;
 
         const preloadedSounds = {
-            // URLs relatives au repo GitHub Pages
             bell: new Audio('./gong-hit-smartsound-fx-1-00-10.mp3'),
             bowl: new Audio('./gong-singing-bowl-ding-danijel-zambo-1-00-19.mp3'),
             melody: new Audio('./calm-meditation-intro-music-ambience-om-fx-1-00-15.mp3'),
@@ -573,7 +549,6 @@
             try {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 
-                // IMPORTANT: Écouter les changements d'état AudioContext
                 audioContext.addEventListener('statechange', () => {
                     console.log('AudioContext state:', audioContext.state);
                     
@@ -591,7 +566,6 @@
             }
         }
 
-        // Initialiser AudioContext dès le chargement
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initAudioContext);
         } else {
@@ -617,6 +591,7 @@
 
         function selectSound(soundType) {
             stopAllSounds();
+            
             selectedSound = soundType;
             
             document.querySelectorAll('.sound-btn').forEach(btn => {
@@ -639,42 +614,6 @@
                         console.log('Aperçu audio non disponible');
                     }
                 }, 100);
-            }
-        }
-
-        function selectGongInterval(interval) {
-            gongInterval = interval === 'none' ? null : interval;
-            
-            document.querySelectorAll('.gong-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            const dataValue = interval === 'none' ? 'none' : interval.toString();
-            document.querySelector(`[data-gong="${dataValue}"]`).classList.add('active');
-        }
-
-        function adjustGongInterval(delta) {
-            if (isRunning) return;
-
-            if (gongInterval === null) {
-                // Si aucun gong, démarrer à 5 min
-                gongInterval = 5;
-            } else {
-                // Ajuster par 1 minute (min: 1, max: 120)
-                gongInterval = Math.max(1, Math.min(120, gongInterval + delta));
-            }
-
-            updateGongDisplay();
-        }
-
-        function updateGongDisplay() {
-            const display = document.getElementById('gongDisplay');
-            if (gongInterval === null) {
-                display.textContent = 'Aucun';
-                display.style.color = '#6B6B6B';
-            } else {
-                display.textContent = `${gongInterval} min`;
-                display.style.color = '#B8A58D';
             }
         }
 
@@ -774,6 +713,29 @@
             }
         }
 
+        function adjustGongInterval(delta) {
+            if (isRunning) return;
+
+            if (gongInterval === null) {
+                gongInterval = 5;
+            } else {
+                gongInterval = Math.max(1, Math.min(120, gongInterval + delta));
+            }
+
+            updateGongDisplay();
+        }
+
+        function updateGongDisplay() {
+            const display = document.getElementById('gongDisplay');
+            if (gongInterval === null) {
+                display.textContent = 'Aucun';
+                display.style.color = '#6B6B6B';
+            } else {
+                display.textContent = `${gongInterval} min`;
+                display.style.color = '#B8A58D';
+            }
+        }
+
         function stopAllSounds() {
             if (currentlyPlayingAudio) {
                 currentlyPlayingAudio.pause();
@@ -860,8 +822,7 @@
             isRunning = !isRunning;
             
             if (isRunning) {
-                // Démarrage
-                acquireWakeLock(); // CRITICAL: Acquérir Wake Lock
+                acquireWakeLock();
                 
                 document.getElementById('playBtn').textContent = '❚❚';
                 document.getElementById('timeControls').classList.add('hidden');
@@ -873,7 +834,6 @@
                 
                 lastGongTime = 0;
                 
-                // Préparation
                 isPreparationPhase = true;
                 preparationLeft = preparationTime;
                 preparationStartTime = Date.now();
@@ -886,7 +846,6 @@
                 
                 playGongSound();
                 
-                // Timer robust avec timestamps
                 timerInterval = setInterval(() => {
                     if (!isRunning) return;
                     
@@ -917,7 +876,6 @@
                     checkGongInterval();
                 }, 1000);
             } else {
-                // Pause
                 clearInterval(timerInterval);
                 pausedTime = getElapsedTime();
                 isRunning = false;
@@ -959,10 +917,9 @@
         updateDisplay();
         updateGongDisplay();
 
-        // Nettoyage au fermeture
         window.addEventListener('beforeunload', () => {
             releaseWakeLock();
         });
     </script>
 </body>
-</html
+</html>
