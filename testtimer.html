@@ -479,6 +479,13 @@
 
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         
+        // Reprendre AudioContext s'il se suspend en arrière-plan
+        audioContext.addEventListener('statechange', () => {
+            if (audioContext.state === 'suspended' && isRunning) {
+                audioContext.resume().catch(e => console.warn('AudioContext resume error:', e));
+            }
+        });
+        
         const sounds = {
             bell: () => {
                 if (preloadedSounds.bell) {
@@ -634,7 +641,7 @@
             const elapsedTime = totalTime - timeLeft;
             const gongIntervalSeconds = gongInterval * 60;
             
-            // Ne jouer le gong que si timeLeft > 0 (évite la collision avec le son de fin)
+            // Ne jouer que si timeLeft > 0 (évite la collision avec le son de fin)
             if (timeLeft > 0 && elapsedTime > 0 && elapsedTime % gongIntervalSeconds === 0 && elapsedTime !== lastGongTime) {
                 lastGongTime = elapsedTime;
                 playGongSound();
