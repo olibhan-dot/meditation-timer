@@ -634,7 +634,8 @@
             const elapsedTime = totalTime - timeLeft;
             const gongIntervalSeconds = gongInterval * 60;
             
-            if (elapsedTime > 0 && elapsedTime % gongIntervalSeconds === 0 && elapsedTime !== lastGongTime) {
+            // Ne jouer le gong que si timeLeft > 0 (évite la collision avec le son de fin)
+            if (timeLeft > 0 && elapsedTime > 0 && elapsedTime % gongIntervalSeconds === 0 && elapsedTime !== lastGongTime) {
                 lastGongTime = elapsedTime;
                 playGongSound();
             }
