@@ -438,73 +438,6 @@
     </div>
 
     <script>
-        // ========== CRITICAL FIX: Wake Lock Management ==========
-        let wakeLock = null;
-
-        async function acquireWakeLock() {
-            try {
-                if ('wakeLock' in navigator) {
-                    wakeLock = await navigator.wakeLock.request('screen');
-                    console.log('✓ Wake Lock acquired - écran restera actif');
-                    document.addEventListener('visibilitychange', handleVisibilityChange);
-                } else {
-                    console.warn('Wake Lock API non supportée sur cet appareil');
-                }
-            } catch (err) {
-                console.warn('Impossible d\'acquérir Wake Lock:', err);
-            }
-        }
-
-        async function releaseWakeLock() {
-            if (wakeLock) {
-                try {
-                    await wakeLock.release();
-                    wakeLock = null;
-                    console.log('✓ Wake Lock relâché');
-                    document.removeEventListener('visibilitychange', handleVisibilityChange);
-                } catch (err) {
-                    console.error('Erreur en relâchant Wake Lock:', err);
-                }
-            }
-        }
-
-        function handleVisibilityChange() {
-            if (document.hidden) {
-                console.log('App en arrière-plan');
-            } else {
-                console.log('App en avant-plan - réacquisition Wake Lock');
-                if (isRunning && wakeLock === null) {
-                    acquireWakeLock();
-                }
-                if (audioContext && audioContext.state === 'suspended') {
-                    console.log('AudioContext suspendu - tentative de reprise...');
-                    audioContext.resume().catch(e => console.warn('Impossible de reprendre AudioContext:', e));
-                }
-            }
-        }
-
-        // ========== CRITICAL FIX: Robust Timing ==========
-        let startTime = null;
-        let pausedTime = 0;
-        let preparationStartTime = null;
-
-        function getElapsedTime() {
-            if (!isRunning) return pausedTime;
-            return (Date.now() - startTime) + pausedTime;
-        }
-
-        function getRemainingTime() {
-            if (isPreparationPhase) {
-                const preparationElapsed = Math.floor((Date.now() - preparationStartTime) / 1000);
-                return Math.max(0, preparationTime - preparationElapsed);
-            } else {
-                const elapsedMs = getElapsedTime();
-                const elapsedSeconds = Math.floor(elapsedMs / 1000);
-                return Math.max(0, totalTime - elapsedSeconds);
-            }
-        }
-
-        // ========== CRITICAL FIX: AudioContext Recovery ==========
         let hours = 0;
         let minutes = 5;
         let seconds = 0;
@@ -518,13 +451,16 @@
         let customAudio = null;
         let currentlyPlayingAudio = null;
 
+        // Variables pour le gong
         let gongInterval = null;
         let lastGongTime = 0;
 
+        // Variables pour la phase de préparation
         let isPreparationPhase = false;
         let preparationTime = 20;
         let preparationLeft = preparationTime;
 
+        // Sons pré-chargés
         const preloadedSounds = {
             bell: new Audio('./gong-hit-smartsound-fx-1-00-10.mp3'),
             bowl: new Audio('./gong-singing-bowl-ding-danijel-zambo-1-00-19.mp3'),
@@ -532,45 +468,83 @@
             gong: new Audio('./tibetan-bowl-hit-om-fx-low-2-00-07.mp3')
         };
 
+        // Précharger les sons
         Object.values(preloadedSounds).forEach(audio => {
             audio.volume = 0.7;
             audio.load();
-            audio.addEventListener('error', () => {
-                console.warn('Erreur chargement audio');
-            });
         });
 
         const radius = 75;
         const circumference = 2 * Math.PI * radius;
 
-        let audioContext = null;
-
-        function initAudioContext() {
-            try {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        const sounds = {
+            bell: () => {
+                if (preloadedSounds.bell) {
+                    currentlyPlayingAudio = preloadedSounds.bell;
+                    preloadedSounds.bell.currentTime = 0;
+                    preloadedSounds.bell.play().catch(e => console.log('Erreur lecture bell:', e));
+                }
+            },
+            
+            gong: () => {
+                const gainNode = audioContext.createGain();
+                const oscillator1 = audioContext.createOscillator();
+                const oscillator2 = audioContext.createOscillator();
+                const oscillator3 = audioContext.createOscillator();
                 
-                audioContext.addEventListener('statechange', () => {
-                    console.log('AudioContext state:', audioContext.state);
-                    
-                    if (audioContext.state === 'suspended' && isRunning) {
-                        console.log('AudioContext suspendu pendant la méditation - tentative de reprise');
-                        audioContext.resume().catch(e => {
-                            console.warn('Impossible de reprendre AudioContext:', e);
-                        });
-                    }
+                oscillator1.frequency.setValueAtTime(110, audioContext.currentTime);
+                oscillator2.frequency.setValueAtTime(165, audioContext.currentTime);
+                oscillator3.frequency.setValueAtTime(220, audioContext.currentTime);
+                
+                oscillator1.type = 'sine';
+                oscillator2.type = 'sine';
+                oscillator3.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.25, audioContext.currentTime + 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.15, audioContext.currentTime + 0.8);
+                gainNode.gain.exponentialRampToValueAtTime(0.05, audioContext.currentTime + 2.5);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 6.0);
+                
+                [oscillator1, oscillator2, oscillator3].forEach(osc => {
+                    osc.connect(gainNode);
+                    osc.start(audioContext.currentTime);
+                    osc.stop(audioContext.currentTime + 6);
                 });
                 
-                console.log('✓ AudioContext initialisé');
-            } catch (err) {
-                console.error('Erreur initialisation AudioContext:', err);
+                gainNode.connect(audioContext.destination);
+            },
+            
+            bowl: () => {
+                if (preloadedSounds.bowl) {
+                    currentlyPlayingAudio = preloadedSounds.bowl;
+                    preloadedSounds.bowl.currentTime = 0;
+                    preloadedSounds.bowl.play().catch(e => console.log('Erreur lecture bol:', e));
+                }
+            },
+            
+            melody: () => {
+                if (preloadedSounds.melody) {
+                    currentlyPlayingAudio = preloadedSounds.melody;
+                    preloadedSounds.melody.currentTime = 0;
+                    preloadedSounds.melody.play().catch(e => console.log('Erreur lecture mélodie:', e));
+                }
+            },
+            
+            custom: () => {
+                if (customAudio && customSoundUrl) {
+                    currentlyPlayingAudio = customAudio;
+                    customAudio.currentTime = 0;
+                    customAudio.play().catch(e => console.log('Erreur lecture audio:', e));
+                }
+            },
+            
+            none: () => {
+                // Pas de son
             }
-        }
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initAudioContext);
-        } else {
-            initAudioContext();
-        }
+        };
 
         function updateCustomSound() {
             const url = document.getElementById('customSoundUrl').value;
@@ -609,107 +583,11 @@
             if (soundType !== 'none') {
                 setTimeout(() => {
                     try {
-                        playSound(soundType);
+                        sounds[soundType]();
                     } catch (error) {
                         console.log('Aperçu audio non disponible');
                     }
                 }, 100);
-            }
-        }
-
-        function playSound(soundType) {
-            try {
-                if (soundType === 'bell' && preloadedSounds.bell) {
-                    currentlyPlayingAudio = preloadedSounds.bell;
-                    preloadedSounds.bell.currentTime = 0;
-                    preloadedSounds.bell.play().catch(e => console.log('Erreur lecture bell:', e));
-                } else if (soundType === 'bowl' && preloadedSounds.bowl) {
-                    currentlyPlayingAudio = preloadedSounds.bowl;
-                    preloadedSounds.bowl.currentTime = 0;
-                    preloadedSounds.bowl.play().catch(e => console.log('Erreur lecture bol:', e));
-                } else if (soundType === 'melody' && preloadedSounds.melody) {
-                    currentlyPlayingAudio = preloadedSounds.melody;
-                    preloadedSounds.melody.currentTime = 0;
-                    preloadedSounds.melody.play().catch(e => console.log('Erreur lecture mélodie:', e));
-                } else if (soundType === 'custom' && customAudio && customSoundUrl) {
-                    currentlyPlayingAudio = customAudio;
-                    customAudio.currentTime = 0;
-                    customAudio.play().catch(e => console.log('Erreur lecture audio:', e));
-                } else if (soundType === 'gong') {
-                    playGongSynth();
-                }
-            } catch (error) {
-                console.error('Erreur playSound:', error);
-            }
-        }
-
-        function playGongSynth() {
-            try {
-                if (!audioContext || audioContext.state === 'closed') {
-                    initAudioContext();
-                }
-                
-                if (audioContext.state === 'suspended') {
-                    audioContext.resume().then(() => playGongSynth()).catch(e => {
-                        console.warn('Impossible de reprendre AudioContext:', e);
-                    });
-                    return;
-                }
-
-                const gainNode = audioContext.createGain();
-                const oscillator1 = audioContext.createOscillator();
-                const oscillator2 = audioContext.createOscillator();
-                const oscillator3 = audioContext.createOscillator();
-                
-                oscillator1.frequency.setValueAtTime(110, audioContext.currentTime);
-                oscillator2.frequency.setValueAtTime(165, audioContext.currentTime);
-                oscillator3.frequency.setValueAtTime(220, audioContext.currentTime);
-                
-                oscillator1.type = 'sine';
-                oscillator2.type = 'sine';
-                oscillator3.type = 'sine';
-                
-                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-                gainNode.gain.linearRampToValueAtTime(0.25, audioContext.currentTime + 0.1);
-                gainNode.gain.exponentialRampToValueAtTime(0.15, audioContext.currentTime + 0.8);
-                gainNode.gain.exponentialRampToValueAtTime(0.05, audioContext.currentTime + 2.5);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 6.0);
-                
-                [oscillator1, oscillator2, oscillator3].forEach(osc => {
-                    osc.connect(gainNode);
-                    osc.start(audioContext.currentTime);
-                    osc.stop(audioContext.currentTime + 6);
-                });
-                
-                gainNode.connect(audioContext.destination);
-            } catch (error) {
-                console.error('Erreur synthèse gong:', error);
-            }
-        }
-
-        function playGongSound() {
-            const indicator = document.getElementById('gongIndicator');
-            indicator.style.display = 'block';
-            
-            if (preloadedSounds.gong) {
-                preloadedSounds.gong.currentTime = 0;
-                preloadedSounds.gong.play().catch(e => console.log('Erreur lecture gong:', e));
-            }
-            
-            setTimeout(() => {
-                indicator.style.display = 'none';
-            }, 1000);
-        }
-
-        function checkGongInterval() {
-            if (!gongInterval || !isRunning || isPreparationPhase) return;
-            
-            const elapsedTime = totalTime - getRemainingTime();
-            const gongIntervalSeconds = gongInterval * 60;
-            
-            if (elapsedTime > 0 && elapsedTime % gongIntervalSeconds === 0 && elapsedTime !== lastGongTime) {
-                lastGongTime = elapsedTime;
-                playGongSound();
             }
         }
 
@@ -736,6 +614,32 @@
             }
         }
 
+        function playGongSound() {
+            const indicator = document.getElementById('gongIndicator');
+            indicator.style.display = 'block';
+            
+            if (preloadedSounds.gong) {
+                preloadedSounds.gong.currentTime = 0;
+                preloadedSounds.gong.play().catch(e => console.log('Erreur lecture gong:', e));
+            }
+            
+            setTimeout(() => {
+                indicator.style.display = 'none';
+            }, 1000);
+        }
+
+        function checkGongInterval() {
+            if (!gongInterval || !isRunning || isPreparationPhase) return;
+            
+            const elapsedTime = totalTime - timeLeft;
+            const gongIntervalSeconds = gongInterval * 60;
+            
+            if (elapsedTime > 0 && elapsedTime % gongIntervalSeconds === 0 && elapsedTime !== lastGongTime) {
+                lastGongTime = elapsedTime;
+                playGongSound();
+            }
+        }
+
         function stopAllSounds() {
             if (currentlyPlayingAudio) {
                 currentlyPlayingAudio.pause();
@@ -759,7 +663,7 @@
         function playCompletionSound() {
             try {
                 if (selectedSound !== 'none') {
-                    playSound(selectedSound);
+                    sounds[selectedSound]();
                 }
             } catch (error) {
                 console.log('Audio non disponible');
@@ -772,13 +676,11 @@
             document.getElementById('secondsDisplay').textContent = seconds;
             
             if (isPreparationPhase) {
-                const prepLeft = getRemainingTime();
-                document.getElementById('timeDisplay').textContent = `${prepLeft}s`;
+                document.getElementById('timeDisplay').textContent = `${preparationLeft}s`;
             } else {
-                const remaining = getRemainingTime();
-                const h = Math.floor(remaining / 3600);
-                const m = Math.floor((remaining % 3600) / 60);
-                const s = remaining % 60;
+                const h = Math.floor(timeLeft / 3600);
+                const m = Math.floor((timeLeft % 3600) / 60);
+                const s = timeLeft % 60;
                 
                 document.getElementById('timeDisplay').textContent = 
                     `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
@@ -786,9 +688,9 @@
             
             let progressPercentage = 0;
             if (isPreparationPhase) {
-                progressPercentage = ((preparationTime - getRemainingTime()) / preparationTime) * 100;
+                progressPercentage = ((preparationTime - preparationLeft) / preparationTime) * 100;
             } else {
-                progressPercentage = totalTime > 0 ? ((totalTime - getRemainingTime()) / totalTime) * 100 : 0;
+                progressPercentage = totalTime > 0 ? ((totalTime - timeLeft) / totalTime) * 100 : 0;
             }
             
             const offset = circumference - (progressPercentage / 100) * circumference;
@@ -822,8 +724,6 @@
             isRunning = !isRunning;
             
             if (isRunning) {
-                acquireWakeLock();
-                
                 document.getElementById('playBtn').textContent = '❚❚';
                 document.getElementById('timeControls').classList.add('hidden');
                 document.getElementById('soundSelector').classList.add('hidden');
@@ -836,9 +736,6 @@
                 
                 isPreparationPhase = true;
                 preparationLeft = preparationTime;
-                preparationStartTime = Date.now();
-                startTime = Date.now();
-                pausedTime = 0;
                 
                 document.getElementById('preparationText').classList.remove('hidden');
                 document.getElementById('timeDisplay').classList.add('hidden');
@@ -847,20 +744,27 @@
                 playGongSound();
                 
                 timerInterval = setInterval(() => {
-                    if (!isRunning) return;
-                    
-                    updateDisplay();
-                    
                     if (isPreparationPhase) {
-                        if (getRemainingTime() <= 0) {
+                        // Phase de préparation
+                        preparationLeft--;
+                        updateDisplay();
+                        
+                        if (preparationLeft <= 0) {
+                            // Fin de la préparation
                             isPreparationPhase = false;
                             document.getElementById('preparationText').classList.add('hidden');
                             document.getElementById('timeDisplay').classList.remove('hidden');
                             document.getElementById('instructions').textContent = 'Méditation en cours...';
+                            
                             playGongSound();
                         }
                     } else {
-                        if (getRemainingTime() <= 0) {
+                        // Timer principal de méditation
+                        timeLeft--;
+                        updateDisplay();
+                        checkGongInterval();
+                        
+                        if (timeLeft <= 0) {
                             clearInterval(timerInterval);
                             isRunning = false;
                             isCompleted = true;
@@ -868,17 +772,13 @@
                             document.getElementById('completedText').classList.remove('hidden');
                             document.getElementById('instructions').textContent = 'Session terminée';
                             document.body.classList.remove('meditation-active');
-                            releaseWakeLock();
                             playCompletionSound();
                         }
                     }
-                    
-                    checkGongInterval();
                 }, 1000);
             } else {
+                // Pause
                 clearInterval(timerInterval);
-                pausedTime = getElapsedTime();
-                isRunning = false;
                 document.getElementById('playBtn').textContent = '▶';
                 document.getElementById('instructions').textContent = 'En pause';
                 document.body.classList.remove('meditation-active');
@@ -887,7 +787,6 @@
 
         function resetTimer() {
             clearInterval(timerInterval);
-            releaseWakeLock();
             isRunning = false;
             isCompleted = false;
             isPreparationPhase = false;
@@ -895,8 +794,6 @@
             totalTime = hours * 3600 + minutes * 60 + seconds;
             timeLeft = totalTime;
             lastGongTime = 0;
-            pausedTime = 0;
-            startTime = null;
             
             document.getElementById('playBtn').textContent = '▶';
             document.getElementById('timeControls').classList.remove('hidden');
@@ -916,10 +813,6 @@
         // Initialisation
         updateDisplay();
         updateGongDisplay();
-
-        window.addEventListener('beforeunload', () => {
-            releaseWakeLock();
-        });
     </script>
 </body>
 </html>
