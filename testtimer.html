@@ -24,6 +24,11 @@
             height: 100vh;
             height: 100dvh;
             overflow: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: #0F0F0F;
         }
 
         body.meditation-active {
@@ -49,6 +54,12 @@
             gap: 16px;
             max-height: 100vh;
             max-height: 100dvh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body.dark-mode .timer-container {
+            background: #1F1F1F;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
         }
 
         .title {
@@ -58,6 +69,11 @@
             letter-spacing: 0.5px;
             margin: 8px 0;
             font-family: 'Cinzel', serif;
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode .title {
+            color: #FFFFFF;
         }
 
         .circle-container {
@@ -223,6 +239,11 @@
             font-weight: 400;
             font-family: 'Cinzel', serif;
             margin: 4px 0;
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode .instructions {
+            color: #B0B0B0;
         }
 
         .sound-selector {
@@ -230,6 +251,23 @@
             padding: 12px;
             border-radius: 12px;
             margin: 8px 0;
+            transition: background-color 0.3s ease;
+        }
+
+        body.dark-mode .sound-selector {
+            background: #2A2A2A;
+        }
+
+        .gong-selector {
+            background: #F5F3F0;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 8px 0;
+            transition: background-color 0.3s ease;
+        }
+
+        body.dark-mode .gong-selector {
+            background: #2A2A2A;
         }
 
         .section-title {
@@ -238,13 +276,102 @@
             font-weight: 500;
             margin-bottom: 8px;
             font-family: 'Cinzel', serif;
+            transition: color 0.3s ease;
         }
 
-        .sound-options {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-bottom: 8px;
+        body.dark-mode .section-title {
+            color: #B0B0B0;
+        }
+
+        .time-control {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #F5F3F0;
+            padding: 8px;
+            border-radius: 12px;
+            flex: 1;
+            max-width: 100px;
+            transition: background-color 0.3s ease;
+        }
+
+        body.dark-mode .time-control {
+            background: #2A2A2A;
+        }
+
+        .time-label {
+            color: #6B6B6B;
+            font-size: 0.95rem;
+            font-weight: 500;
+            font-family: 'Cinzel', serif;
+            margin-bottom: 4px;
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode .time-label {
+            color: #B0B0B0;
+        }
+
+        .time-value {
+            color: #2D2D2D;
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            font-weight: 400;
+            min-width: 24px;
+            text-align: center;
+            padding: 2px 4px;
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode .time-value {
+            color: #FFFFFF;
+        }
+
+        .time-text {
+            font-family: 'Cinzel', serif;
+            font-size: 2.05rem;
+            font-weight: 400;
+            color: #2D2D2D;
+            margin-bottom: 4px;
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode .time-text {
+            color: #FFFFFF;
+        }
+
+        .time-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            border: 1px solid #E5E5E5;
+            color: #6B6B6B;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            user-select: none;
+        }
+
+        body.dark-mode .time-btn {
+            background: #2A2A2A;
+            border-color: #444444;
+            color: #B0B0B0;
+        }
+
+        .time-btn:active {
+            background: #8DBDB8;
+            color: white;
+            border-color: #8DBDB8;
+        }
+
+        body.dark-mode .time-btn:active {
+            background: #6ECCC4;
+            color: #0F0F0F;
+            border-color: #6ECCC4;
         }
 
         .sound-btn {
@@ -259,10 +386,36 @@
             transition: all 0.2s ease;
         }
 
+        body.dark-mode .sound-btn {
+            background: #2A2A2A;
+            border-color: #444444;
+            color: #B0B0B0;
+        }
+
         .sound-btn:active, .sound-btn.active {
             background: #8DBDB8;
             color: white;
             border-color: #8DBDB8;
+        }
+
+        body.dark-mode .sound-btn:active, body.dark-mode .sound-btn.active {
+            background: #6ECCC4;
+            color: #0F0F0F;
+            border-color: #6ECCC4;
+        }
+
+        .gong-value {
+            color: #2D2D2D;
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            font-weight: 400;
+            min-width: 70px;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode .gong-value {
+            color: #FFFFFF;
         }
 
         .custom-sound-input {
@@ -350,17 +503,30 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        .preparation-text {
-            color: #B8A58D;
-            font-size: 0.9rem;
-            font-weight: 400;
-            font-family: 'Cinzel', serif;
-            margin-top: 4px;
+        .dark-mode-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 24px;
+            transition: transform 0.2s ease;
+            z-index: 10;
+        }
+
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .timer-container {
+            position: relative;
         }
     </style>
 </head>
 <body>
     <div class="timer-container">
+        <button class="dark-mode-toggle" id="darkModeToggle" onclick="toggleDarkMode()">🌙</button>
         <h1 class="title">Méditation</h1>
         
         <p class="instructions" id="instructions">Réglez votre temps et démarrez</p>
@@ -438,6 +604,40 @@
     </div>
 
     <script>
+        // Fonction pour basculer le dark mode
+        function toggleDarkMode() {
+            const body = document.body;
+            const toggle = document.getElementById('darkModeToggle');
+            
+            if (body.classList.contains('dark-mode')) {
+                body.classList.remove('dark-mode');
+                toggle.textContent = '🌙';
+                localStorage.setItem('darkMode', 'false');
+            } else {
+                body.classList.add('dark-mode');
+                toggle.textContent = '☀️';
+                localStorage.setItem('darkMode', 'true');
+            }
+        }
+
+        // Charger la préférence dark mode au chargement
+        function loadDarkModePreference() {
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            const body = document.body;
+            const toggle = document.getElementById('darkModeToggle');
+            
+            if (isDarkMode) {
+                body.classList.add('dark-mode');
+                toggle.textContent = '☀️';
+            } else {
+                body.classList.remove('dark-mode');
+                toggle.textContent = '🌙';
+            }
+        }
+
+        // Charger la préférence au démarrage
+        document.addEventListener('DOMContentLoaded', loadDarkModePreference);
+        
         let hours = 0;
         let minutes = 5;
         let seconds = 0;
@@ -459,6 +659,9 @@
         let isPreparationPhase = false;
         let preparationTime = 20;
         let preparationLeft = preparationTime;
+
+        // Variables pour Wake Lock API
+        let wakeLock = null;
 
         // Sons pré-chargés
         const preloadedSounds = {
@@ -483,6 +686,38 @@
         audioContext.addEventListener('statechange', () => {
             if (audioContext.state === 'suspended' && isRunning) {
                 audioContext.resume().catch(e => console.warn('AudioContext resume error:', e));
+            }
+        });
+
+        // Fonctions Wake Lock API
+        const requestWakeLock = async () => {
+            if ('wakeLock' in navigator) {
+                try {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    console.log('Wake Lock acquis avec succès');
+                } catch (err) {
+                    console.log('Wake Lock non disponible:', err.name, err.message);
+                }
+            }
+        };
+
+        const releaseWakeLock = async () => {
+            if (wakeLock !== null) {
+                try {
+                    await wakeLock.release();
+                    wakeLock = null;
+                    console.log('Wake Lock libéré');
+                } catch (err) {
+                    console.log('Erreur lors de la libération du Wake Lock:', err);
+                }
+            }
+        };
+
+        // Réacquérir le Wake Lock quand le document devient visible
+        document.addEventListener('visibilitychange', async () => {
+            if (isRunning && wakeLock === null && document.visibilityState === 'visible') {
+                console.log('Document visible, réacquisition du Wake Lock');
+                await requestWakeLock();
             }
         });
         
@@ -742,6 +977,9 @@
                 
                 lastGongTime = 0;
                 
+                // Activer Wake Lock au démarrage
+                requestWakeLock();
+                
                 isPreparationPhase = true;
                 preparationLeft = preparationTime;
                 
@@ -780,6 +1018,10 @@
                             document.getElementById('completedText').classList.remove('hidden');
                             document.getElementById('instructions').textContent = 'Session terminée';
                             document.body.classList.remove('meditation-active');
+                            
+                            // Libérer Wake Lock à la fin
+                            releaseWakeLock();
+                            
                             playCompletionSound();
                         }
                     }
@@ -802,6 +1044,9 @@
             totalTime = hours * 3600 + minutes * 60 + seconds;
             timeLeft = totalTime;
             lastGongTime = 0;
+            
+            // Libérer Wake Lock au reset
+            releaseWakeLock();
             
             document.getElementById('playBtn').textContent = '▶';
             document.getElementById('timeControls').classList.remove('hidden');
