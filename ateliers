@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Ateliers AUBE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #F5F3F0 0%, #EFEFED 100%);
+            font-family: 'Cinzel', serif;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        body.dark-mode .container {
+            background: #1F1F1F;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            z-index: 10;
+        }
+
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        h1 {
+            color: #8DBDB8;
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .intro-section {
+            margin-bottom: 36px;
+        }
+
+        .intro-section p {
+            color: #2D2D2D;
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 16px;
+            font-weight: 400;
+            text-align: justify;
+        }
+
+        .highlight {
+            color: #8DBDB8;
+            font-weight: 500;
+        }
+
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            color: #2D2D2D;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #8DBDB8;
+        }
+
+        .format-box {
+            background: #F9F7F5;
+            border-left: 4px solid #8DBDB8;
+            padding: 20px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .format-box:hover {
+            box-shadow: 0 4px 16px rgba(141, 189, 184, 0.15);
+        }
+
+        .format-title {
+            color: #8DBDB8;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .format-text {
+            color: #2D2D2D;
+            font-size: 15px;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        .why-section {
+            background: #F5F3F0;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+
+        .why-section p {
+            color: #2D2D2D;
+            font-size: 15px;
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        .cta {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 32px;
+            border-top: 1px solid #E5E5E5;
+        }
+
+        .cta-text {
+            color: #8DBDB8;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .emoji {
+            font-size: 24px;
+            margin-right: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 24px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .section-title {
+                font-size: 18px;
+            }
+
+            .intro-section p,
+            .format-text,
+            .why-section p {
+                font-size: 14px;
+            }
+
+            .cta-text {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Les Ateliers AUBE</h1>
+
+        <div class="intro-section">
+            <p>Au-delà de la pratique personnelle de la méditation, il existe une dimension collective du développement qui mérite d'être explorée. C'est pourquoi nous préparons l'arrivée d'une nouvelle offre pour vous.</p>
+            
+            <p><span class="highlight">Très bientôt, nos enseignants vous proposeront des ateliers en direct.</span> Des moments d'apprentissage authentique, de partage de savoirs, et de progression ensemble.</p>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Deux formats pour vous</h2>
+
+            <div class="format-box">
+                <div class="format-title"><span class="emoji">🖥️</span>En ligne</div>
+                <p class="format-text">Accédez aux ateliers via Zoom ou Google Meet, vous retrouverez vos enseignants pour des sessions guidées, des ateliers thématiques, des sessions de questions-réponses. Un format flexible et accessible.</p>
+            </div>
+
+            <div class="format-box">
+                <div class="format-title"><span class="emoji">🏡</span>En présentiel</div>
+                <p class="format-text">Pour une immersion plus complète : retraites, journées intensives, cercles de pratique dans nos espaces dédiés. Une expérience sensorielle et humaine à part entière.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Pourquoi cette évolution ?</h2>
+            <div class="why-section">
+                <p>Car la transmission vivante, l'interaction directe avec les enseignants et l'énergie du groupe créent une profondeur que le contenu seul ne peut pas offrir. C'est une approche plus complète de votre pratique et de votre développement personnel.</p>
+            </div>
+        </div>
+
+        <div class="cta">
+            <p>Nous terminons actuellement les préparatifs.</p>
+            <p class="cta-text">Restez attentifs. 🔔</p>
+        </div>
+    </div>
+
+    <script>
+        // Aucun script nécessaire pour cette page
+    </script>
+</body>
+</html>
