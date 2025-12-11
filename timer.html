@@ -420,6 +420,42 @@
             font-family: 'Cinzel', serif;
             margin-top: 4px;
         }
+
+        /* NOUVEAU : Styles pour les boutons de choix de préparation */
+        .preparation-choice {
+            background: #F5F3F0;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 8px 0;
+        }
+
+        .preparation-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .prep-choice-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #E5E5E5;
+            border-radius: 8px;
+            background: white;
+            color: #6B6B6B;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .prep-choice-btn.active {
+            background: #8DBDB8;
+            color: white;
+            border-color: #8DBDB8;
+        }
+
+        .prep-choice-btn:active {
+            transform: scale(0.98);
+        }
     </style>
 </head>
 <body>
@@ -470,6 +506,15 @@
                 </div>
             </div>
         </div>
+
+        <!-- NOUVEAU : Choix de la phase de préparation -->
+        <div class="preparation-choice" id="preparationChoice">
+            <div class="section-title">Phase de préparation</div>
+            <div class="preparation-buttons">
+                <button class="prep-choice-btn active" onclick="selectPreparation(true)">Avec (20s)</button>
+                <button class="prep-choice-btn" onclick="selectPreparation(false)">Sans</button>
+            </div>
+        </div>
         
         <div class="main-controls">
             <button class="control-btn" id="playBtn" onclick="toggleTimer()">▶</button>
@@ -511,7 +556,7 @@
         let isRunning = false;
         let isCompleted = false;
         let timerInterval = null;
-        let selectedSound = 'bell';
+        let selectedSound = 'bell'; // ✅ Par défaut : Gong
         let customSoundUrl = '';
         let customAudio = null;
         let currentlyPlayingAudio = null;
@@ -520,7 +565,8 @@
         let gongInterval = null;
         let lastGongTime = 0;
 
-        // NOUVEAU : Variables pour la phase de préparation
+        // ✅ CORRIGÉ : Variables pour la phase de préparation
+        let usePreparationPhase = true; // ✅ Par défaut : activée
         let isPreparationPhase = false;
         let preparationTime = 20; // 20 secondes
         let preparationLeft = preparationTime;
@@ -657,6 +703,21 @@
             }
         }
 
+        // ✅ NOUVEAU : Fonction pour choisir la préparation
+        function selectPreparation(withPrep) {
+            usePreparationPhase = withPrep;
+            
+            document.querySelectorAll('.prep-choice-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (withPrep) {
+                document.querySelectorAll('.prep-choice-btn')[0].classList.add('active');
+            } else {
+                document.querySelectorAll('.prep-choice-btn')[1].classList.add('active');
+            }
+        }
+
         function selectGongInterval(interval) {
             gongInterval = interval === 'none' ? null : interval;
             
@@ -716,13 +777,25 @@
             }
         }
 
+        // ✅ CORRIGÉ : S'assurer que le son joue toujours à la fin
         function playCompletionSound() {
             try {
-                if (selectedSound !== 'none') {
+                console.log('Lecture du son de fin:', selectedSound); // Debug
+                if (selectedSound && selectedSound !== 'none') {
                     sounds[selectedSound]();
+                } else {
+                    // ✅ FALLBACK : Si aucun son n'est sélectionné, jouer le gong par défaut
+                    console.log('Fallback : lecture du gong par défaut');
+                    sounds['bell']();
                 }
             } catch (error) {
-                console.log('Audio non disponible');
+                console.log('Erreur audio:', error);
+                // ✅ FALLBACK : En cas d'erreur, essayer le gong
+                try {
+                    sounds['bell']();
+                } catch (e) {
+                    console.log('Impossible de jouer le son de fin');
+                }
             }
         }
 
@@ -731,7 +804,7 @@
             document.getElementById('minutesDisplay').textContent = minutes;
             document.getElementById('secondsDisplay').textContent = seconds;
             
-            // MODIFIÉ : Gestion de l'affichage selon la phase
+            // Gestion de l'affichage selon la phase
             if (isPreparationPhase) {
                 // Phase de préparation : afficher seulement les secondes
                 document.getElementById('timeDisplay').textContent = `${preparationLeft}s`;
@@ -745,7 +818,7 @@
                     `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
             }
             
-            // MODIFIÉ : Calcul de la progression selon la phase
+            // Calcul de la progression selon la phase
             let progressPercentage = 0;
             if (isPreparationPhase) {
                 progressPercentage = ((preparationTime - preparationLeft) / preparationTime) * 100;
@@ -788,6 +861,7 @@
                 document.getElementById('timeControls').classList.add('hidden');
                 document.getElementById('soundSelector').classList.add('hidden');
                 document.getElementById('gongSelector').classList.add('hidden');
+                document.getElementById('preparationChoice').classList.add('hidden'); // ✅ Masquer le choix
                 document.getElementById('resetBtn').classList.remove('hidden');
                 document.getElementById('progressRing').classList.remove('breathing');
                 document.body.classList.add('meditation-active');
@@ -795,17 +869,23 @@
                 // Réinitialiser les compteurs
                 lastGongTime = 0;
                 
-                // NOUVEAU : Démarrer par la phase de préparation
-                isPreparationPhase = true;
-                preparationLeft = preparationTime;
-                
-                // Afficher le texte et l'instruction de préparation
-                document.getElementById('preparationText').classList.remove('hidden');
-                document.getElementById('timeDisplay').classList.add('hidden');
-                document.getElementById('instructions').textContent = 'Installez-vous confortablement...';
-                
-                // Jouer le gong de début
-                playGongSound();
+                // ✅ CORRIGÉ : Utiliser le choix de préparation
+                if (usePreparationPhase) {
+                    isPreparationPhase = true;
+                    preparationLeft = preparationTime;
+                    
+                    document.getElementById('preparationText').classList.remove('hidden');
+                    document.getElementById('timeDisplay').classList.add('hidden');
+                    document.getElementById('instructions').textContent = 'Installez-vous confortablement...';
+                    
+                    playGongSound();
+                } else {
+                    // Sauter directement à la méditation
+                    isPreparationPhase = false;
+                    document.getElementById('preparationText').classList.add('hidden');
+                    document.getElementById('timeDisplay').classList.remove('hidden');
+                    document.getElementById('instructions').textContent = 'Méditation en cours...';
+                }
                 
                 timerInterval = setInterval(() => {
                     if (isPreparationPhase) {
@@ -820,7 +900,6 @@
                             document.getElementById('timeDisplay').classList.remove('hidden');
                             document.getElementById('instructions').textContent = 'Méditation en cours...';
                             
-                            // Jouer le gong de transition
                             playGongSound();
                         }
                     } else {
@@ -837,7 +916,7 @@
                             document.getElementById('completedText').classList.remove('hidden');
                             document.getElementById('instructions').textContent = 'Session terminée';
                             document.body.classList.remove('meditation-active');
-                            playCompletionSound();
+                            playCompletionSound(); // ✅ Joue toujours le gong par défaut
                         }
                     }
                 }, 1000);
@@ -864,6 +943,7 @@
             document.getElementById('timeControls').classList.remove('hidden');
             document.getElementById('soundSelector').classList.remove('hidden');
             document.getElementById('gongSelector').classList.remove('hidden');
+            document.getElementById('preparationChoice').classList.remove('hidden'); // ✅ Réafficher le choix
             document.getElementById('resetBtn').classList.add('hidden');
             document.getElementById('completedText').classList.add('hidden');
             document.getElementById('preparationText').classList.add('hidden');
