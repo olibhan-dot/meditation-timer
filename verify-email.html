@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérification Email - AUBE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 30px;
+            letter-spacing: -1px;
+        }
+
+        .status-icon {
+            font-size: 60px;
+            margin: 20px 0;
+        }
+
+        h1 {
+            color: #1a1a1a;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .error {
+            color: #e74c3c;
+            background: #ffe6e6;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        .success {
+            color: #27ae60;
+            background: #e6ffe6;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .link-text {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 1px solid #667eea;
+        }
+
+        .link-text:hover {
+            color: #764ba2;
+            border-bottom-color: #764ba2;
+        }
+
+        .footer {
+            margin-top: 30px;
+            color: #999;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">AUBE</div>
+
+        <div id="loading">
+            <div class="spinner"></div>
+            <h1>Vérification en cours...</h1>
+            <p>Un instant, nous vérifions votre adresse email.</p>
+        </div>
+
+        <div id="success" style="display: none;">
+            <div class="status-icon">✅</div>
+            <h1>Email vérifié!</h1>
+            <p>Votre adresse email a été vérifiée avec succès.</p>
+            <div class="success">Vous pouvez maintenant vous connecter à l'application AUBE.</div>
+            <button class="button" onclick="openApp()">Ouvrir l'application</button>
+            <div class="footer">
+                <p>Si l'app ne s'ouvre pas, vous pouvez vous connecter manuellement via votre téléphone.</p>
+            </div>
+        </div>
+
+        <div id="error" style="display: none;">
+            <div class="status-icon">❌</div>
+            <h1>Vérification échouée</h1>
+            <div id="errorMessage" class="error"></div>
+            <p>Voici quelques solutions:</p>
+            <ul style="text-align: left; display: inline-block; color: #666; font-size: 14px;">
+                <li style="margin-bottom: 10px;">Le lien a peut-être expiré (validité: 30 minutes)</li>
+                <li style="margin-bottom: 10px;">Vérifiez que vous avez copié le lien complet</li>
+                <li>Réessayez de vous inscrire ou contactez le support</li>
+            </ul>
+            <button class="button" onclick="goToApp()">Retour à l'application</button>
+            <div class="footer">
+                <p>Besoin d'aide? Contactez-nous à aube@les-humains-alignes.fr</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const XANO_BASE_URL = 'https://xffz-rj1a-trrq.p7.xano.io/api:uqk7Yrjr';
+        const APP_URL_SCHEME = 'aube://'; // FlutterFlow URL scheme
+
+        async function verifyEmail() {
+            try {
+                // Récupérer le token depuis l'URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const token = urlParams.get('token');
+
+                if (!token) {
+                    showError('Token de vérification manquant');
+                    return;
+                }
+
+                // Appeler l'endpoint Xano
+                const response = await fetch(
+                    `${XANO_BASE_URL}/auth/verify-email?token=${encodeURIComponent(token)}`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    showSuccess(data);
+                } else {
+                    showError(data.error || 'Erreur lors de la vérification');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Erreur de connexion. Vérifiez votre connexion internet.');
+            }
+        }
+
+        function showSuccess(data) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('success').style.display = 'block';
+        }
+
+        function showError(errorMessage) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('success').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('errorMessage').textContent = errorMessage;
+        }
+
+        function openApp() {
+            // Tenter d'ouvrir l'app via URL scheme
+            window.location.href = APP_URL_SCHEME;
+            
+            // Fallback: rediriger vers le store après 2 secondes
+            setTimeout(() => {
+                if (navigator.userAgent.match(/iphone|ipad|ipod/i)) {
+                    // iOS
+                    window.location.href = 'https://apps.apple.com/app/aube';
+                } else {
+                    // Android
+                    window.location.href = 'https://play.google.com/store/apps/details?id=com.aube.app';
+                }
+            }, 2000);
+        }
+
+        function goToApp() {
+            openApp();
+        }
+
+        // Lancer la vérification au chargement
+        window.onload = verifyEmail;
+    </script>
+</body>
+</html>
