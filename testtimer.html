@@ -55,6 +55,7 @@
             max-height: 100vh;
             max-height: 100dvh;
             transition: background-color 0.3s ease, color 0.3s ease;
+            position: relative;
         }
 
         body.dark-mode .timer-container {
@@ -114,6 +115,11 @@
             font-weight: 400;
             color: #2D2D2D;
             margin-bottom: 4px;
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode .time-text {
+            color: #FFFFFF;
         }
 
         .completed-text {
@@ -145,6 +151,11 @@
             border-radius: 12px;
             flex: 1;
             max-width: 100px;
+            transition: background-color 0.3s ease;
+        }
+
+        body.dark-mode .time-control {
+            background: #2A2A2A;
         }
 
         .time-label {
@@ -153,6 +164,11 @@
             font-weight: 500;
             font-family: 'Cinzel', serif;
             margin-bottom: 4px;
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode .time-label {
+            color: #B0B0B0;
         }
 
         .time-adjuster {
@@ -177,10 +193,22 @@
             user-select: none;
         }
 
+        body.dark-mode .time-btn {
+            background: #2A2A2A;
+            border-color: #444444;
+            color: #B0B0B0;
+        }
+
         .time-btn:active {
             background: #8DBDB8;
             color: white;
             border-color: #8DBDB8;
+        }
+
+        body.dark-mode .time-btn:active {
+            background: #6ECCC4;
+            color: #0F0F0F;
+            border-color: #6ECCC4;
         }
 
         .time-value {
@@ -191,6 +219,11 @@
             min-width: 24px;
             text-align: center;
             padding: 2px 4px;
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode .time-value {
+            color: #FFFFFF;
         }
 
         .main-controls {
@@ -283,97 +316,6 @@
             color: #B0B0B0;
         }
 
-        .time-control {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background: #F5F3F0;
-            padding: 8px;
-            border-radius: 12px;
-            flex: 1;
-            max-width: 100px;
-            transition: background-color 0.3s ease;
-        }
-
-        body.dark-mode .time-control {
-            background: #2A2A2A;
-        }
-
-        .time-label {
-            color: #6B6B6B;
-            font-size: 0.95rem;
-            font-weight: 500;
-            font-family: 'Cinzel', serif;
-            margin-bottom: 4px;
-            transition: color 0.3s ease;
-        }
-
-        body.dark-mode .time-label {
-            color: #B0B0B0;
-        }
-
-        .time-value {
-            color: #2D2D2D;
-            font-family: 'Cinzel', serif;
-            font-size: 1.3rem;
-            font-weight: 400;
-            min-width: 24px;
-            text-align: center;
-            padding: 2px 4px;
-            transition: color 0.3s ease;
-        }
-
-        body.dark-mode .time-value {
-            color: #FFFFFF;
-        }
-
-        .time-text {
-            font-family: 'Cinzel', serif;
-            font-size: 2.05rem;
-            font-weight: 400;
-            color: #2D2D2D;
-            margin-bottom: 4px;
-            transition: color 0.3s ease;
-        }
-
-        body.dark-mode .time-text {
-            color: #FFFFFF;
-        }
-
-        .time-btn {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: white;
-            border: 1px solid #E5E5E5;
-            color: #6B6B6B;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            font-size: 14px;
-            user-select: none;
-        }
-
-        body.dark-mode .time-btn {
-            background: #2A2A2A;
-            border-color: #444444;
-            color: #B0B0B0;
-        }
-
-        .time-btn:active {
-            background: #8DBDB8;
-            color: white;
-            border-color: #8DBDB8;
-        }
-
-        body.dark-mode .time-btn:active {
-            background: #6ECCC4;
-            color: #0F0F0F;
-            border-color: #6ECCC4;
-        }
-
         .sound-btn {
             padding: 8px;
             border: 1px solid #E5E5E5;
@@ -457,13 +399,6 @@
             50% { opacity: 0.5; }
         }
 
-        .gong-selector {
-            background: #F5F3F0;
-            padding: 12px;
-            border-radius: 12px;
-            margin: 8px 0;
-        }
-
         .gong-control {
             display: flex;
             justify-content: center;
@@ -473,15 +408,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-        }
-
-        .gong-value {
-            color: #2D2D2D;
-            font-family: 'Cinzel', serif;
-            font-size: 1.3rem;
-            font-weight: 400;
-            min-width: 70px;
-            text-align: center;
         }
 
         .gong-indicator {
@@ -519,8 +445,72 @@
             transform: scale(1.1);
         }
 
-        .timer-container {
-            position: relative;
+        /* NOUVEAU : Styles pour les boutons de choix de préparation */
+        .preparation-choice {
+            background: #F5F3F0;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 8px 0;
+            transition: background-color 0.3s ease;
+        }
+
+        body.dark-mode .preparation-choice {
+            background: #2A2A2A;
+        }
+
+        .preparation-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .prep-choice-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #E5E5E5;
+            border-radius: 8px;
+            background: white;
+            color: #6B6B6B;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        body.dark-mode .prep-choice-btn {
+            background: #2A2A2A;
+            border-color: #444444;
+            color: #B0B0B0;
+        }
+
+        .prep-choice-btn.active {
+            background: #8DBDB8;
+            color: white;
+            border-color: #8DBDB8;
+        }
+
+        body.dark-mode .prep-choice-btn.active {
+            background: #6ECCC4;
+            color: #0F0F0F;
+            border-color: #6ECCC4;
+        }
+
+        .prep-choice-btn:active {
+            transform: scale(0.98);
+        }
+
+        .preparation-text {
+            color: #B8A58D;
+            font-size: 0.9rem;
+            font-weight: 400;
+            font-family: 'Cinzel', serif;
+            margin-top: 4px;
+        }
+
+        .sound-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 8px;
         }
     </style>
 </head>
@@ -568,6 +558,15 @@
                     <div class="time-value" id="secondsDisplay">0</div>
                     <div class="time-btn" onclick="adjustTime('seconds', 1)">+</div>
                 </div>
+            </div>
+        </div>
+
+        <!-- NOUVEAU : Choix de la phase de préparation -->
+        <div class="preparation-choice" id="preparationChoice">
+            <div class="section-title">Phase de préparation</div>
+            <div class="preparation-buttons">
+                <button class="prep-choice-btn active" onclick="selectPreparation(true)">Avec (20s)</button>
+                <button class="prep-choice-btn" onclick="selectPreparation(false)">Sans</button>
             </div>
         </div>
         
@@ -646,7 +645,7 @@
         let isRunning = false;
         let isCompleted = false;
         let timerInterval = null;
-        let selectedSound = 'bell';
+        let selectedSound = 'bell'; // ✅ Par défaut : Gong
         let customSoundUrl = '';
         let customAudio = null;
         let currentlyPlayingAudio = null;
@@ -655,7 +654,8 @@
         let gongInterval = null;
         let lastGongTime = 0;
 
-        // Variables pour la phase de préparation
+        // ✅ Variables pour la phase de préparation
+        let usePreparationPhase = true; // ✅ Par défaut : activée
         let isPreparationPhase = false;
         let preparationTime = 20;
         let preparationLeft = preparationTime;
@@ -833,6 +833,21 @@
             }
         }
 
+        // ✅ NOUVEAU : Fonction pour choisir la préparation
+        function selectPreparation(withPrep) {
+            usePreparationPhase = withPrep;
+            
+            document.querySelectorAll('.prep-choice-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (withPrep) {
+                document.querySelectorAll('.prep-choice-btn')[0].classList.add('active');
+            } else {
+                document.querySelectorAll('.prep-choice-btn')[1].classList.add('active');
+            }
+        }
+
         function adjustGongInterval(delta) {
             if (isRunning) return;
 
@@ -903,13 +918,25 @@
             }
         }
 
+        // ✅ CORRIGÉ : S'assurer que le son joue toujours à la fin
         function playCompletionSound() {
             try {
-                if (selectedSound !== 'none') {
+                console.log('Lecture du son de fin:', selectedSound);
+                if (selectedSound && selectedSound !== 'none') {
                     sounds[selectedSound]();
+                } else {
+                    // ✅ FALLBACK : Si aucun son n'est sélectionné, jouer le gong par défaut
+                    console.log('Fallback : lecture du gong par défaut');
+                    sounds['bell']();
                 }
             } catch (error) {
-                console.log('Audio non disponible');
+                console.log('Erreur audio:', error);
+                // ✅ FALLBACK : En cas d'erreur, essayer le gong
+                try {
+                    sounds['bell']();
+                } catch (e) {
+                    console.log('Impossible de jouer le son de fin');
+                }
             }
         }
 
@@ -971,6 +998,7 @@
                 document.getElementById('timeControls').classList.add('hidden');
                 document.getElementById('soundSelector').classList.add('hidden');
                 document.getElementById('gongSelector').classList.add('hidden');
+                document.getElementById('preparationChoice').classList.add('hidden'); // ✅ Masquer le choix
                 document.getElementById('resetBtn').classList.remove('hidden');
                 document.getElementById('progressRing').classList.remove('breathing');
                 document.body.classList.add('meditation-active');
@@ -980,14 +1008,23 @@
                 // Activer Wake Lock au démarrage
                 requestWakeLock();
                 
-                isPreparationPhase = true;
-                preparationLeft = preparationTime;
-                
-                document.getElementById('preparationText').classList.remove('hidden');
-                document.getElementById('timeDisplay').classList.add('hidden');
-                document.getElementById('instructions').textContent = 'Installez-vous confortablement...';
-                
-                playGongSound();
+                // ✅ CORRIGÉ : Utiliser le choix de préparation
+                if (usePreparationPhase) {
+                    isPreparationPhase = true;
+                    preparationLeft = preparationTime;
+                    
+                    document.getElementById('preparationText').classList.remove('hidden');
+                    document.getElementById('timeDisplay').classList.add('hidden');
+                    document.getElementById('instructions').textContent = 'Installez-vous confortablement...';
+                    
+                    playGongSound();
+                } else {
+                    // Sauter directement à la méditation
+                    isPreparationPhase = false;
+                    document.getElementById('preparationText').classList.add('hidden');
+                    document.getElementById('timeDisplay').classList.remove('hidden');
+                    document.getElementById('instructions').textContent = 'Méditation en cours...';
+                }
                 
                 timerInterval = setInterval(() => {
                     if (isPreparationPhase) {
@@ -1052,6 +1089,7 @@
             document.getElementById('timeControls').classList.remove('hidden');
             document.getElementById('soundSelector').classList.remove('hidden');
             document.getElementById('gongSelector').classList.remove('hidden');
+            document.getElementById('preparationChoice').classList.remove('hidden'); // ✅ Réafficher le choix
             document.getElementById('resetBtn').classList.add('hidden');
             document.getElementById('completedText').classList.add('hidden');
             document.getElementById('preparationText').classList.add('hidden');
