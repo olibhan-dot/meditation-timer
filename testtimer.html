@@ -47,15 +47,16 @@
             padding: 20px;
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
             width: 100%;
-            max-width: 380px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
+            max-width: 400px;
+            display: grid;
+            grid-template-columns: 160px 70px 1fr;
             gap: 16px;
             max-height: 100vh;
             max-height: 100dvh;
             transition: background-color 0.3s ease, color 0.3s ease;
             position: relative;
+            align-items: center;
+            justify-items: center;
         }
 
         body.dark-mode .timer-container {
@@ -71,6 +72,8 @@
             margin: 8px 0;
             font-family: 'Cinzel', serif;
             transition: color 0.3s ease;
+            grid-column: 1 / -1;
+            text-align: center;
         }
 
         body.dark-mode .title {
@@ -82,6 +85,8 @@
             width: 160px;
             height: 160px;
             margin: 0 auto;
+            grid-column: 1;
+            grid-row: 3;
         }
 
         .progress-ring {
@@ -140,6 +145,7 @@
             flex-direction: row;
             gap: 8px;
             justify-content: center;
+            grid-column: 1 / -1;
         }
 
         .time-control {
@@ -231,6 +237,8 @@
             justify-content: center;
             gap: 16px;
             margin: 8px 0;
+            grid-column: 2;
+            grid-row: 3;
         }
 
         .control-btn {
@@ -273,6 +281,8 @@
             font-family: 'Cinzel', serif;
             margin: 4px 0;
             transition: color 0.3s ease;
+            grid-column: 1 / -1;
+            text-align: center;
         }
 
         body.dark-mode .instructions {
@@ -285,6 +295,7 @@
             border-radius: 12px;
             margin: 8px 0;
             transition: background-color 0.3s ease;
+            grid-column: 1 / -1;
         }
 
         body.dark-mode .sound-selector {
@@ -297,6 +308,7 @@
             border-radius: 12px;
             margin: 8px 0;
             transition: background-color 0.3s ease;
+            grid-column: 1 / -1;
         }
 
         body.dark-mode .gong-selector {
@@ -452,6 +464,7 @@
             border-radius: 12px;
             margin: 8px 0;
             transition: background-color 0.3s ease;
+            grid-column: 1 / -1;
         }
 
         body.dark-mode .preparation-choice {
