@@ -1069,6 +1069,7 @@
                             isRunning = false;
                             isCompleted = true;
                             document.getElementById('playBtn').textContent = '↻';
+                            document.getElementById('resetBtn').classList.add('hidden');
                             document.getElementById('completedText').classList.remove('hidden');
                             document.getElementById('instructions').textContent = 'Session terminée';
                             document.body.classList.remove('meditation-active');
